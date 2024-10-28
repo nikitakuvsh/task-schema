@@ -7,6 +7,11 @@ import './TaskManager.css';
 function TaskManager() {
     const [blocks, setBlocks] = useState([]);
     const [connections, setConnections] = useState([]);
+    const [isDragging, setIsDragging] = useState(false);
+    const [offsetX, setOffsetX] = useState(0);
+    const [offsetY, setOffsetY] = useState(0);
+    const [dragStartX, setDragStartX] = useState(0);
+    const [dragStartY, setDragStartY] = useState(0);
 
     const createBlock = () => {
         const newBlock = { id: blocks.length, width: 100, height: 100, x: 20, y: 20 + blocks.length * 120 };
@@ -18,8 +23,8 @@ function TaskManager() {
             const updatedBlocks = [...prevBlocks];
             updatedBlocks[index] = {
                 ...updatedBlocks[index],
-                x: data.x,
-                y: data.y,
+                x: data.x - offsetX,
+                y: data.y - offsetY,
             };
             return updatedBlocks;
         });
@@ -44,8 +49,27 @@ function TaskManager() {
         setConnections([...connections, { from: fromBlock.id, to: toBlock.id }]);
     };
 
+    const handleMouseDown = (e) => {
+        if (e.target.id === "paper") {
+            setIsDragging(true);
+            setDragStartX(e.clientX - offsetX);
+            setDragStartY(e.clientY - offsetY);
+        }
+    };
+
+    const handleMouseMove = (e) => {
+        if (isDragging) {
+            setOffsetX(e.clientX - dragStartX);
+            setOffsetY(e.clientY - dragStartY);
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
     return (
-        <div className="scheme-container">
+        <div className="scheme-container" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
             <select className="scheme__select" id="timeframe-selector">
                 <option className="scheme__option" value="day">День</option>
                 <option className="scheme__option" value="week">Неделя</option>
@@ -58,27 +82,33 @@ function TaskManager() {
             </button>
 
             <div className="palette" id="block-pallete"></div>
-            <div className="paper" id="paper" style={{ position: 'relative' }}>
+            <div
+                className="paper"
+                id="paper"
+                style={{
+                    position: 'relative',
+                    cursor: isDragging ? 'grabbing' : 'grab',
+                    backgroundPosition: `${offsetX}px ${offsetY}px`
+                }}
+                onMouseDown={handleMouseDown}
+            >
                 {/* Рисуем стрелки */}
                 <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
                     {connections.map((conn, index) => {
                         const fromBlock = blocks.find(block => block.id === conn.from);
                         const toBlock = blocks.find(block => block.id === conn.to);
 
-                        if (!fromBlock || !toBlock) return null; // Проверка на существование блоков
+                        if (!fromBlock || !toBlock) return null;
 
-                        // Определяем координаты стрелки
                         const fromX = fromBlock.x + fromBlock.width;
-                        const fromY = fromBlock.y + fromBlock.height; // Низ блока
+                        const fromY = fromBlock.y + fromBlock.height;
                         const toX = toBlock.x + toBlock.width / 2;
-                        const toY = toBlock.y; // Верх блока
+                        const toY = toBlock.y;
 
-                        // Корректируем положение стрелки, чтобы она немного "заходила" на блоки
-                        const offset = 90; // Смещение для стрелок
                         return (
                             <path
                                 key={`connection-${index}`}
-                                d={`M ${fromX} ${fromY} C ${(fromX + toX) / 2} ${fromY + 50}, ${(fromX + toX) / 2} ${toY - 50}, ${toX} ${toY + offset}`}
+                                d={`M ${fromX + offsetX} ${fromY + offsetY} C ${(fromX + toX) / 2 + offsetX} ${fromY + 50 + offsetY}, ${(fromX + toX) / 2 + offsetX} ${toY - 50 + offsetY}, ${toX + offsetX} ${toY + offsetY}`}
                                 fill="transparent"
                                 stroke="black"
                                 strokeWidth="2"
@@ -97,25 +127,21 @@ function TaskManager() {
                 {blocks.map((block, index) => (
                     <Draggable
                         key={block.id}
-                        position={{ x: block.x, y: block.y }}
-                        bounds="#paper"
+                        position={{ x: block.x + offsetX, y: block.y + offsetY }}
                         onStop={(e, data) => handleBlockDragStop(index, data)}
                     >
                         <ResizableBox
                             className="paper__block"
                             width={block.width}
                             height={block.height}
-                            minConstraints={[50, 50]} // Минимальный размер
-                            maxConstraints={[300, 300]} // Максимальный размер
-                            resizeHandles={["se"]} // Ручка изменения размера в правом нижнем углу
-                            onResizeStart={(e) => {
-                                e.stopPropagation(); // Останавливаем событие, чтобы не перетаскивать блок
-                            }}
+                            minConstraints={[50, 50]}
+                            maxConstraints={[300, 300]}
+                            resizeHandles={["se"]}
+                            onResizeStart={(e) => e.stopPropagation()}
                             onResizeStop={(e, data) => handleResizeStop(index, data)}
                         >
                             <div className="resizable-content">
                                 Блок {index + 1}
-                                {/* Добавьте кнопку или логику для соединения блоков */}
                                 {index > 0 && (
                                     <button onClick={() => connectBlocks(index - 1, index)}>Соединить с предыдущим</button>
                                 )}
@@ -127,6 +153,11 @@ function TaskManager() {
 
             <button className="task-manager__button" id="save-btn">Save Schema</button>
             <button className="task-manager__button" id="load-btn">Load Schema</button>
+
+            {/* Координаты смещения */}
+            <div className="offset-display">
+                Координаты смещения: X: {offsetX}, Y: {offsetY}
+            </div>
         </div>
     );
 }
