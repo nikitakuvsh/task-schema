@@ -103,12 +103,12 @@ function TaskManager() {
                         const fromX = fromBlock.x + fromBlock.width;
                         const fromY = fromBlock.y + fromBlock.height;
                         const toX = toBlock.x + toBlock.width / 2;
-                        const toY = toBlock.y;
+                        const toY = toBlock.y + toBlock.height / 1.2;
 
                         return (
                             <path
                                 key={`connection-${index}`}
-                                d={`M ${fromX + offsetX} ${fromY + offsetY} C ${(fromX + toX) / 2 + offsetX} ${fromY + 50 + offsetY}, ${(fromX + toX) / 2 + offsetX} ${toY - 50 + offsetY}, ${toX + offsetX} ${toY + offsetY}`}
+                                d={`M ${fromX + offsetX} ${fromY + offsetY} C ${(fromX + toX) / 2 + offsetX} ${fromY + 50 + offsetY}, ${(fromX + toX) / 2 + offsetX + 100} ${toY - 100 + offsetY }, ${toX + offsetX} ${toY + offsetY}`}
                                 fill="transparent"
                                 stroke="black"
                                 strokeWidth="2"
