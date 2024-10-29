@@ -6,10 +6,9 @@ import './TaskManager.css';
 
 function TaskManager() {
     const [blocks, setBlocks] = useState([]);
-    const [connections, setConnections] = useState([]);
-    const [isDragging, setIsDragging] = useState(false);
     const [offsetX, setOffsetX] = useState(0);
     const [offsetY, setOffsetY] = useState(0);
+    const [isDragging, setIsDragging] = useState(false);
     const [dragStartX, setDragStartX] = useState(0);
     const [dragStartY, setDragStartY] = useState(0);
 
@@ -40,13 +39,6 @@ function TaskManager() {
             };
             return updatedBlocks;
         });
-    };
-
-    const connectBlocks = (fromIndex, toIndex) => {
-        const fromBlock = blocks[fromIndex];
-        const toBlock = blocks[toIndex];
-        
-        setConnections([...connections, { from: fromBlock.id, to: toBlock.id }]);
     };
 
     const handleMouseDown = (e) => {
@@ -85,44 +77,9 @@ function TaskManager() {
             <div
                 className="paper"
                 id="paper"
-                style={{
-                    position: 'relative',
-                    cursor: isDragging ? 'grabbing' : 'grab',
-                    backgroundPosition: `${offsetX}px ${offsetY}px`
-                }}
+                style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
                 onMouseDown={handleMouseDown}
             >
-                {/* Рисуем стрелки */}
-                <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}>
-                    {connections.map((conn, index) => {
-                        const fromBlock = blocks.find(block => block.id === conn.from);
-                        const toBlock = blocks.find(block => block.id === conn.to);
-
-                        if (!fromBlock || !toBlock) return null;
-
-                        const fromX = fromBlock.x + fromBlock.width;
-                        const fromY = fromBlock.y + fromBlock.height;
-                        const toX = toBlock.x + toBlock.width / 2;
-                        const toY = toBlock.y + toBlock.height / 1.2;
-
-                        return (
-                            <path
-                                key={`connection-${index}`}
-                                d={`M ${fromX + offsetX} ${fromY + offsetY} C ${(fromX + toX) / 2 + offsetX} ${fromY + 50 + offsetY}, ${(fromX + toX) / 2 + offsetX + 100} ${toY - 100 + offsetY }, ${toX + offsetX} ${toY + offsetY}`}
-                                fill="transparent"
-                                stroke="black"
-                                strokeWidth="2"
-                                markerEnd="url(#arrowhead)"
-                            />
-                        );
-                    })}
-                    <defs>
-                        <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="5" refY="3.5" orient="auto">
-                            <polygon points="0 0, 10 3.5, 0 7" fill="black" />
-                        </marker>
-                    </defs>
-                </svg>
-
                 {/* Блоки */}
                 {blocks.map((block, index) => (
                     <Draggable
@@ -134,17 +91,16 @@ function TaskManager() {
                             className="paper__block"
                             width={block.width}
                             height={block.height}
-                            minConstraints={[50, 50]}
-                            maxConstraints={[300, 300]}
-                            resizeHandles={["se"]}
-                            onResizeStart={(e) => e.stopPropagation()}
+                            minConstraints={[50, 50]} // Минимальный размер
+                            maxConstraints={[300, 300]} // Максимальный размер
+                            resizeHandles={["se"]} // Ручка изменения размера в правом нижнем углу
+                            onResizeStart={(e) => {
+                                e.stopPropagation(); // Останавливаем событие, чтобы не перетаскивать блок
+                            }}
                             onResizeStop={(e, data) => handleResizeStop(index, data)}
                         >
                             <div className="resizable-content">
                                 Блок {index + 1}
-                                {index > 0 && (
-                                    <button onClick={() => connectBlocks(index - 1, index)}>Соединить с предыдущим</button>
-                                )}
                             </div>
                         </ResizableBox>
                     </Draggable>
@@ -154,9 +110,9 @@ function TaskManager() {
             <button className="task-manager__button" id="save-btn">Save Schema</button>
             <button className="task-manager__button" id="load-btn">Load Schema</button>
 
-            {/* Координаты смещения */}
-            <div className="offset-display">
-                Координаты смещения: X: {offsetX}, Y: {offsetY}
+            {/* Отображение координат */}
+            <div className="coordinates-display">
+                ОСЬ X: {offsetX.toFixed(0)} ОСЬ Y: {offsetY.toFixed(0)}
             </div>
         </div>
     );
