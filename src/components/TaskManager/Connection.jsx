@@ -1,37 +1,25 @@
 import React from 'react';
 
-const Connection = ({ from, to }) => {
+const Connection = ({ from, to, offsetX, offsetY }) => {
     if (!from || !to) return null;
 
-    // Координаты центра блоков
-    const fromCenterX = from.x + from.width / 2;
-    const fromCenterY = from.y + from.height / 2;
-    const toCenterX = to.x + to.width / 2;
-    const toCenterY = to.y + to.height / 2;
-
-    // Положение контрольных точек для плавной кривой
-    const controlOffsetY = -90; // Регулируемое смещение для плавности кривой
-    const controlPoint1X = fromCenterX;
-    const controlPoint1Y = fromCenterY + controlOffsetY;
-    const controlPoint2X = toCenterX;
-    const controlPoint2Y = toCenterY + controlOffsetY;
+    const fromX = from.x + from.width;
+    const fromY = from.y + from.height;
+    const toX = to.x + to.width / 2;
+    const toY = to.y + to.height / 1.2;
 
     return (
-        <svg>
+        <svg className='schema-svg'>
             <defs>
-                <marker
-                    id="arrowhead"
-                    markerWidth="10"
-                    markerHeight="7"
-                    refX="0"
-                    refY="3.5"
-                    orient="auto"
-                >
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="5" refY="3.5" orient="auto">
                     <polygon points="0 0, 10 3.5, 0 7" fill="black" />
                 </marker>
             </defs>
             <path
-                d={`M ${fromCenterX} ${fromCenterY} C ${controlPoint1X} ${controlPoint1Y}, ${controlPoint2X} ${controlPoint2Y}, ${toCenterX} ${toCenterY}`}
+                d={`M ${fromX + offsetX} ${fromY + offsetY} 
+                    C ${(fromX + toX) / 2 + offsetX} ${fromY + 50 + offsetY}, 
+                    ${(fromX + toX) / 2 + offsetX + 100} ${toY - 100 + offsetY}, 
+                    ${toX + offsetX} ${toY + offsetY}`}
                 fill="transparent"
                 stroke="black"
                 strokeWidth="2"
