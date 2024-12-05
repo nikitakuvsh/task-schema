@@ -75,12 +75,3 @@
     border: 0.1rem dashed #555;
 }
 
-.task-manager__svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 10000px;
-    height: 10000px;
-    pointer-events: none;
-    z-index: 1;
-}

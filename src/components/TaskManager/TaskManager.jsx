@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
+import Block from "./Block";
+import LeaderLines from "./LeaderLines";
 import "./TaskManager.css";
 
 function TaskManager() {
@@ -21,8 +23,8 @@ function TaskManager() {
     const handleMouseMove = (e) => {
         // Перетаскивание плоскости
         if (draggingPlane) {
-            const deltaX = e.clientX - startPlaneDrag.x;
-            const deltaY = e.clientY - startPlaneDrag.y;
+            const deltaX = (e.clientX - startPlaneDrag.x) / 1.3;
+            const deltaY = (e.clientY - startPlaneDrag.y) / 1.3;
             setPlaneOffset((prev) => ({ x: prev.x + deltaX, y: prev.y + deltaY }));
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
@@ -76,25 +78,28 @@ function TaskManager() {
 
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown} >Добавить задачу</button>
-            <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown}
+            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>
+                Добавить задачу
+            </button>
+            <div
+                className="task-manager__plane"
+                onMouseDown={handlePlaneMouseDown}
                 style={{
                     transform: `translate(${planeOffset.x}px, ${planeOffset.y}px)`,
                 }}
             >
                 {blocks.map((block, index) => (
-                    <div key={index} className="task-manager__block"
-                        style={{
-                            left: `${block.x}px`,
-                            top: `${block.y}px`,
-                            width: `${block.width}px`,
-                            height: `${block.height}px`,
-                        }}
-                        onMouseDown={(e) => handleBlockMouseDown(e, index)}
-                    ></div>
+                    <Block
+                        key={index}
+                        index={index}
+                        block={block}
+                        onMouseDown={handleBlockMouseDown}
+                    />
                 ))}
+
                 {draggingButton && currentBlock && (
-                    <div className="task-manager__block task-manager__block--temp"
+                    <div
+                        className="task-manager__block task-manager__block--temp"
                         style={{
                             left: `${currentBlock.x}px`,
                             top: `${currentBlock.y}px`,
@@ -103,6 +108,8 @@ function TaskManager() {
                         }}
                     ></div>
                 )}
+                <LeaderLines blocks={blocks} planeOffset={planeOffset} />
+
             </div>
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">Save schema</button>
