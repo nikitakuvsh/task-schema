@@ -10,13 +10,15 @@
     position: absolute;
     top: 0;
     left: 0;
-    width: 10000rem; /* Большой размер для непрерывного фона */
-    height: 10000rem;
+    width: 99999999999rem; /* Большой размер для непрерывного фона */
+    height: 9999999999rem;
     background-image: linear-gradient(to right, #ddd 0.1rem, transparent 0.1rem),
                       linear-gradient(to bottom, #ddd 0.1rem, transparent 0.1rem);
     background-size: 5rem 5rem;
     transform: translate(-5000px, -5000px); /* Центрируем фон */
     cursor: grab;
+    /* Фиксируем фон, чтобы не было ошибок с его масштабированием */
+    will-change: transform;
 }
 
 .task-manager__plane:active {
