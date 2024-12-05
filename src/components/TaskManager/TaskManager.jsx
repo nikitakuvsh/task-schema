@@ -1,118 +1,112 @@
 import React, { useState } from "react";
-import { ResizableBox } from "react-resizable";
-import "react-resizable/css/styles.css"; // Подключаем стили библиотеки
-import Draggable from "react-draggable";
-import './TaskManager.css';
+import "./TaskManager.css";
 
 function TaskManager() {
-    const [blocks, setBlocks] = useState([]);
-    const [offsetX, setOffsetX] = useState(0);
-    const [offsetY, setOffsetY] = useState(0);
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragStartX, setDragStartX] = useState(0);
-    const [dragStartY, setDragStartY] = useState(0);
+    const [blocks, setBlocks] = useState([]); // Массив блоков
+    const [draggingButton, setDraggingButton] = useState(false); // Перетаскивается ли новый блок
+    const [currentBlock, setCurrentBlock] = useState(null); // Координаты текущего блока
+    const [draggingBlockIndex, setDraggingBlockIndex] = useState(null); // Индекс перетаскиваемого блока
+    const [startDrag, setStartDrag] = useState({ x: 0, y: 0 }); // Начальная позиция мыши для перетаскивания блока
+    const [planeOffset, setPlaneOffset] = useState({ x: -5000, y: -5000 }); // Смещение плоскости
+    const [draggingPlane, setDraggingPlane] = useState(false); // Перетаскивается ли плоскость
+    const [startPlaneDrag, setStartPlaneDrag] = useState({ x: 0, y: 0 }); // Начальная позиция мыши для перетаскивания плоскости
 
-    const createBlock = () => {
-        const newBlock = { id: blocks.length, width: 100, height: 100, x: 20, y: 20 + blocks.length * 120 };
-        setBlocks([...blocks, newBlock]);
-    };
-
-    const handleBlockDragStop = (index, data) => {
-        setBlocks((prevBlocks) => {
-            const updatedBlocks = [...prevBlocks];
-            updatedBlocks[index] = {
-                ...updatedBlocks[index],
-                x: data.x - offsetX,
-                y: data.y - offsetY,
-            };
-            return updatedBlocks;
-        });
-    };
-
-    const handleResizeStop = (index, data) => {
-        setBlocks((prevBlocks) => {
-            const updatedBlocks = [...prevBlocks];
-            updatedBlocks[index] = {
-                ...updatedBlocks[index],
-                width: data.size.width,
-                height: data.size.height,
-            };
-            return updatedBlocks;
-        });
-    };
-
-    const handleMouseDown = (e) => {
-        if (e.target.id === "paper") {
-            setIsDragging(true);
-            setDragStartX(e.clientX - offsetX);
-            setDragStartY(e.clientY - offsetY);
-        }
+    const handleAddTaskMouseDown = (e) => {
+        setDraggingButton(true);
+        const startX = e.clientX - planeOffset.x;
+        const startY = e.clientY - planeOffset.y;
+        setCurrentBlock({ x: startX, y: startY, width: 200, height: 200 });
     };
 
     const handleMouseMove = (e) => {
-        if (isDragging) {
-            setOffsetX(e.clientX - dragStartX);
-            setOffsetY(e.clientY - dragStartY);
+        // Перетаскивание плоскости
+        if (draggingPlane) {
+            const deltaX = e.clientX - startPlaneDrag.x;
+            const deltaY = e.clientY - startPlaneDrag.y;
+            setPlaneOffset((prev) => ({ x: prev.x + deltaX, y: prev.y + deltaY }));
+            setStartPlaneDrag({ x: e.clientX, y: e.clientY });
+        }
+
+        // Перетаскивание блока
+        if (draggingBlockIndex !== null) {
+            const deltaX = e.clientX - startDrag.x;
+            const deltaY = e.clientY - startDrag.y;
+            setBlocks((prev) =>
+                prev.map((block, index) =>
+                    index === draggingBlockIndex
+                        ? { ...block, x: block.x + deltaX, y: block.y + deltaY }
+                        : block
+                )
+            );
+            setStartDrag({ x: e.clientX, y: e.clientY });
+        }
+
+        // Перемещение нового блока
+        if (draggingButton && currentBlock) {
+            setCurrentBlock((prev) => ({
+                ...prev,
+                x: e.clientX - planeOffset.x - 50,
+                y: e.clientY - planeOffset.y - 50,
+            }));
         }
     };
 
     const handleMouseUp = () => {
-        setIsDragging(false);
+        if (draggingButton && currentBlock) {
+            setBlocks((prev) => [...prev, currentBlock]);
+            setDraggingButton(false);
+            setCurrentBlock(null);
+        }
+        setDraggingBlockIndex(null);
+        setDraggingPlane(false);
+    };
+
+    const handleBlockMouseDown = (e, index) => {
+        e.stopPropagation(); // Останавливаем всплытие события
+        setDraggingBlockIndex(index);
+        setStartDrag({ x: e.clientX, y: e.clientY });
+    };
+
+    const handlePlaneMouseDown = (e) => {
+        if (!draggingButton && draggingBlockIndex === null) {
+            setDraggingPlane(true);
+            setStartPlaneDrag({ x: e.clientX, y: e.clientY });
+        }
     };
 
     return (
-        <div className="scheme-container" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-            <select className="scheme__select" id="timeframe-selector">
-                <option className="scheme__option" value="day">День</option>
-                <option className="scheme__option" value="week">Неделя</option>
-                <option className="scheme__option" value="month">Месяц</option>
-                <option className="scheme__option" value="year">Год</option>
-            </select>
-
-            <button className="scheme__add-button" onClick={createBlock}>
-                Создать блок
-            </button>
-
-            <div className="palette" id="block-pallete"></div>
-            <div
-                className="paper"
-                id="paper"
-                style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-                onMouseDown={handleMouseDown}
+        <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown} >Добавить задачу</button>
+            <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown}
+                style={{
+                    transform: `translate(${planeOffset.x}px, ${planeOffset.y}px)`,
+                }}
             >
-                {/* Блоки */}
                 {blocks.map((block, index) => (
-                    <Draggable
-                        key={block.id}
-                        position={{ x: block.x + offsetX, y: block.y + offsetY }}
-                        onStop={(e, data) => handleBlockDragStop(index, data)}
-                    >
-                        <ResizableBox
-                            className="paper__block"
-                            width={block.width}
-                            height={block.height}
-                            minConstraints={[50, 50]} // Минимальный размер
-                            maxConstraints={[300, 300]} // Максимальный размер
-                            resizeHandles={["se"]} // Ручка изменения размера в правом нижнем углу
-                            onResizeStart={(e) => {
-                                e.stopPropagation(); // Останавливаем событие, чтобы не перетаскивать блок
-                            }}
-                            onResizeStop={(e, data) => handleResizeStop(index, data)}
-                        >
-                            <div className="resizable-content">
-                                Блок {index + 1}
-                            </div>
-                        </ResizableBox>
-                    </Draggable>
+                    <div key={index} className="task-manager__block"
+                        style={{
+                            left: `${block.x}px`,
+                            top: `${block.y}px`,
+                            width: `${block.width}px`,
+                            height: `${block.height}px`,
+                        }}
+                        onMouseDown={(e) => handleBlockMouseDown(e, index)}
+                    ></div>
                 ))}
+                {draggingButton && currentBlock && (
+                    <div className="task-manager__block task-manager__block--temp"
+                        style={{
+                            left: `${currentBlock.x}px`,
+                            top: `${currentBlock.y}px`,
+                            width: `${currentBlock.width}px`,
+                            height: `${currentBlock.height}px`,
+                        }}
+                    ></div>
+                )}
             </div>
-
-            <button className="task-manager__button" id="save-btn">Save Schema</button>
-            <button className="task-manager__button" id="load-btn">Load Schema</button>
-
-            {/* Отображение координат */}
-            <div className="coordinates-display">
-                ОСЬ X: {offsetX.toFixed(0)} ОСЬ Y: {offsetY.toFixed(0)}
+            <div className="task-manager__buttons-container">
+                <button className="task-manager__button button--save-schema">Save schema</button>
+                <button className="task-manager__button button--load-schema">Load schema</button>
             </div>
         </div>
     );

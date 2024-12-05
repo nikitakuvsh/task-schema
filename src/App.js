@@ -4,6 +4,9 @@ import TaskManager from "./components/TaskManager/TaskManager";
 import Task from "./components/Task/Task";
 import './main.css';
 import './reset.css';
+import { Buffer } from "buffer";
+global.Buffer = Buffer;
+
 
 function App() {
   return (

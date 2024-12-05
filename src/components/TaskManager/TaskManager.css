@@ -1,71 +1,86 @@
-.scheme-container {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    margin: 2% 0;
+.task-manager {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+    user-select: none;
+}
+
+.task-manager__plane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10000rem; /* Большой размер для непрерывного фона */
+    height: 10000rem;
+    background-image: linear-gradient(to right, #ddd 0.1rem, transparent 0.1rem),
+                      linear-gradient(to bottom, #ddd 0.1rem, transparent 0.1rem);
+    background-size: 5rem 5rem;
+    transform: translate(-5000px, -5000px); /* Центрируем фон */
+    cursor: grab;
+}
+
+.task-manager__plane:active {
+    cursor: grabbing;
 }
 
 .task-manager__button {
-    display: block;
-    background-color: #4CAF50;
-    color: white;
-    font-size: calc(0.5rem + 0.4vw);
+    font-size: 1.2rem;
+    padding: 0.8rem 1.5rem;
+    border: 0.1rem solid #ccc;
+    border-radius: 0.5rem;
+    background-color: #fff;
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s, box-shadow 0.2s;
+    z-index: 10;
 }
 
-.paper {
-    width: 60%;
-    height: 30vw;
-    border: 1px solid black;
+.task-manager__button:hover {
+    background-color: #f0f0f0;
+    box-shadow: 0 0.4rem 1rem rgba(0, 0, 0, 0.2);
 }
 
-.palette {
+.button--add-task {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.task-manager__buttons-container {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    justify-content: center;
+    gap: 2rem;
 }
 
-.scheme__add-button {
-    font-size: calc(1rem + 0.4vw);
-    background-color: blue;
-    color: white;
+.task-manager__block {
+    position: absolute;
+    background-color: #89cff0;
+    border: 0.1rem solid #555;
+    border-radius: 0.2rem;
+    box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.1);
+    cursor: grab;
 }
 
-.paper__block {
-    position: relative;
-    background-color: red;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.task-manager__block:active {
+    cursor: grabbing;
 }
 
-.resizable-content {
-    width: 100%;
-    height: 100%;
-    background-color: red;
-    border-radius: 4px;
+.task-manager__block--temp {
+    background-color: rgba(137, 207, 240, 0.5);
+    border: 0.1rem dashed #555;
 }
 
-.scheme-container {
-    align-items: center;
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    margin: 2% 0;
-}
-
-.paper {
-    width: 60%;
-    height: 30vw;
-    border: 1px solid black;
-    position: relative;
-    overflow: hidden;
-}
-
-.resizable-content {
-    text-align: center;
-    color: white;
-    background-color: blue;
-    align-items: center;
-    display: flex;
-    justify-content: center;
+.task-manager__svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 10000px;
+    height: 10000px;
+    pointer-events: none;
+    z-index: 1;
 }
