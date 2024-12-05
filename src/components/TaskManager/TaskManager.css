@@ -87,3 +87,35 @@
 .task-manager__timeline {
     z-index: 10;
 }
+
+.block__title {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+    font-size: 2rem;
+}
+
+.block__menu {
+    list-style: none;
+    margin: 0;
+    padding: 5px 0;
+    background-color: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: absolute;
+    z-index: 10;
+    width: 150px;
+}
+
+.block__menu li {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.block__menu li:hover {
+    background-color: #f0f0f0;
+}
