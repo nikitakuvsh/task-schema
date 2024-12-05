@@ -14,7 +14,6 @@ function Block({ block, index, onMouseDown }) {
                 height: `${block.height}px`,
             }}
             onMouseDown={(e) => onMouseDown(e, index)}
-            onContextMenu={handleRightClick}
         >
             <h3 className="block__title">{nameTask || `Блок ${index + 1}`}</h3>
         </div>
