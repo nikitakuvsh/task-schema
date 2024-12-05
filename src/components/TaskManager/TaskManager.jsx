@@ -78,28 +78,22 @@ function TaskManager() {
 
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>
-                Добавить задачу
-            </button>
-            <div
-                className="task-manager__plane"
-                onMouseDown={handlePlaneMouseDown}
+            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
+            <div className="task-manager__timeline-wrapper">
+                <span className="task-manager__timeline timeline-start">timeline-start</span>
+                <span className="task-manager__timeline timeline-end">timeline-end</span>
+            </div>
+            <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown}
                 style={{
                     transform: `translate(${planeOffset.x}px, ${planeOffset.y}px)`,
                 }}
             >
                 {blocks.map((block, index) => (
-                    <Block
-                        key={index}
-                        index={index}
-                        block={block}
-                        onMouseDown={handleBlockMouseDown}
-                    />
+                    <Block key={index} index={index} block={block} onMouseDown={handleBlockMouseDown}/>
                 ))}
 
                 {draggingButton && currentBlock && (
-                    <div
-                        className="task-manager__block task-manager__block--temp"
+                    <div className="task-manager__block task-manager__block--temp"
                         style={{
                             left: `${currentBlock.x}px`,
                             top: `${currentBlock.y}px`,

@@ -75,3 +75,13 @@
     border: 0.1rem dashed #555;
 }
 
+.task-manager__timeline-wrapper {
+    display: flex;
+    justify-content: space-between;
+    margin: 4rem;
+    font-size: 1.5rem;
+}
+
+.task-manager__timeline {
+    z-index: 10;
+}
