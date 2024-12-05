@@ -16,7 +16,7 @@ function LeaderLines({ blocks, planeOffset }) {
                 if (startBlock && endBlock) {
                     const line = new LeaderLine(startBlock, endBlock, {
                         color: "#000",
-                        size: 2,
+                        size: 3,
                         dash: { animation: true },
                         startPlug: "disc",
                         endPlug: "arrow1",
