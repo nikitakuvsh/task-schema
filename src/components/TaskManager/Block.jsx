@@ -74,20 +74,7 @@ function Block({ block, index, onMouseDown }) {
             {showMenu && (
                 <ul
                     className="block__menu"
-                    style={{
-                        position: "absolute",
-                        top: `${menuPosition.top}px`,
-                        left: `${menuPosition.left}px`,
-                        zIndex: 1000,
-                        background: "#fff",
-                        border: "1px solid #ccc",
-                        borderRadius: "4px",
-                        boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-                        listStyle: "none",
-                        padding: "8px",
-                        margin: 0,
-                    }}
-                >
+                    style={{top: `${menuPosition.top}px`, left: `${menuPosition.left}px`,}}>
                     <li onClick={handleRename} style={{ padding: "8px", cursor: "pointer" }}>Переименовать</li>
                     <li style={{ padding: "8px", cursor: "pointer" }}>Загрузить документ</li>
                     <li style={{ padding: "8px", cursor: "pointer" }}>Создать новый блок со связью</li>
