@@ -109,14 +109,10 @@
     width: 150px;
 }
 
-.block__menu li {
-    padding: 10px;
+.block__menu-li {
+    padding: 0.5rem;
     font-size: 14px;
     color: #333;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
-}
-
-.block__menu li:hover {
-    background-color: #f0f0f0;
 }

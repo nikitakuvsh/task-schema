@@ -75,11 +75,11 @@ function Block({ block, index, onMouseDown }) {
                 <ul
                     className="block__menu"
                     style={{top: `${menuPosition.top}px`, left: `${menuPosition.left}px`,}}>
-                    <li onClick={handleRename} style={{ padding: "8px", cursor: "pointer" }}>Переименовать</li>
-                    <li style={{ padding: "8px", cursor: "pointer" }}>Загрузить документ</li>
-                    <li style={{ padding: "8px", cursor: "pointer" }}>Создать новый блок со связью</li>
-                    <li style={{ padding: "8px", cursor: "pointer" }}>Связать с существующим блоком</li>
-                    <li style={{ padding: "8px", cursor: "pointer" }}>Удалить</li>
+                    <li className="block__menu-li" onClick={handleRename}>Переименовать</li>
+                    <li className="block__menu-li">Загрузить документ</li>
+                    <li className="block__menu-li">Создать новый блок со связью</li>
+                    <li className="block__menu-li">Связать с существующим блоком</li>
+                    <li className="block__menu-li">Удалить</li>
                 </ul>
             )}
         </div>
