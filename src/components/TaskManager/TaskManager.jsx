@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import Block from "./Block";
 import LeaderLines from "./LeaderLines";
+import Timeline from "./TimeLine";
 import "./TaskManager.css";
 
 function TaskManager() {
@@ -117,14 +118,7 @@ function TaskManager() {
             onMouseUp={handleMouseUp}
         >
             <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
-            <div className="task-manager__timeline-wrapper">
-                <span className="task-manager__timeline timeline-start">
-                    {startDate.toLocaleString()}
-                </span>
-                <span className="task-manager__timeline timeline-end">
-                    {endDate.toLocaleString()}
-                </span>
-            </div>
+            <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()}/>
             <div
                 className="task-manager__plane"
                 onMouseDown={handlePlaneMouseDown}
