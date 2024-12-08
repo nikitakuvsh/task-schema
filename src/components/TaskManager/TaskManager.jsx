@@ -116,12 +116,7 @@ function TaskManager() {
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
         >
-            <button
-                className="task-manager__button button--add-task"
-                onMouseDown={handleAddTaskMouseDown}
-            >
-                Добавить задачу
-            </button>
+            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
             <div className="task-manager__timeline-wrapper">
                 <span className="task-manager__timeline timeline-start">
                     {startDate.toLocaleString()}
@@ -160,12 +155,8 @@ function TaskManager() {
                 <LeaderLines blocks={blocks} planeOffset={planeOffset} />
             </div>
             <div className="task-manager__buttons-container">
-                <button className="task-manager__button button--save-schema">
-                    Сохранить схему
-                </button>
-                <button className="task-manager__button button--load-schema">
-                    Загрузить схему
-                </button>
+                <button className="task-manager__button button--save-schema">Сохранить схему</button>
+                <button className="task-manager__button button--load-schema">Загрузить схему</button>
             </div>
         </div>
     );
