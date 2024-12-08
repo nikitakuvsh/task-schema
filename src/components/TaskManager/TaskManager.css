@@ -19,6 +19,7 @@
     cursor: grab;
     /* Фиксируем фон, чтобы не было ошибок с его масштабированием */
     will-change: transform;
+    overflow: hidden;
 }
 
 .task-manager__plane:active {
