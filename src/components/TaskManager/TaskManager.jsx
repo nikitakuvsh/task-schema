@@ -102,6 +102,20 @@ function TaskManager() {
         updateTimeline();
     }, [scale, planeOffset]);
 
+    const handleCreateConnectedBlock = (sourceIndex) => {
+        setBlocks((prev) => {
+            const sourceBlock = prev[sourceIndex];
+            const newBlock = {
+                x: sourceBlock.x + 250, // Расстояние справа от исходного блока
+                y: sourceBlock.y,
+                width: 200,
+                height: 200,
+            };
+            return [...prev, newBlock];
+        });
+    };
+    
+
     return (
         <div
             className="task-manager"
@@ -136,6 +150,7 @@ function TaskManager() {
                         index={index}
                         block={block}
                         onMouseDown={handleBlockMouseDown}
+                        onCreateConnectedBlock={handleCreateConnectedBlock}
                     />
                 ))}
                 {draggingButton && currentBlock && (
@@ -153,10 +168,10 @@ function TaskManager() {
             </div>
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">
-                    Save schema
+                    Сохранить схему
                 </button>
                 <button className="task-manager__button button--load-schema">
-                    Load schema
+                    Загрузить схему
                 </button>
             </div>
         </div>

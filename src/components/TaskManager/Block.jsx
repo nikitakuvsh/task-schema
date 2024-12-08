@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-function Block({ block, index, onMouseDown }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -79,6 +79,11 @@ function Block({ block, index, onMouseDown }) {
         document.addEventListener("mouseup", onMouseUp);
     };
 
+    const handleCreateConnectedBlockClick = () => {
+        setShowMenu(false);
+        onCreateConnectedBlock(index); // Вызываем функцию из пропсов с текущим индексом
+    };
+
     return (
         <div
             id={`block-${index}`}
@@ -131,7 +136,7 @@ function Block({ block, index, onMouseDown }) {
                         Изменить цвет
                     </li>
                     <li className="block__menu-li">Загрузить документ</li>
-                    <li className="block__menu-li">Создать новый блок со связью</li>
+                    <li className="block__menu-li" onClick={handleCreateConnectedBlockClick}>Создать новый блок со связью</li>
                     <li className="block__menu-li">Связать с существующим блоком</li>
                     <li className="block__menu-li">Удалить</li>
                 </ul>
