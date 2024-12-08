@@ -91,12 +91,6 @@ function TaskManager() {
         }
     };
 
-    const handleWheel = (e) => {
-        e.preventDefault();
-        const scaleDelta = e.deltaY < 0 ? 1.1 : 0.9;
-        setScale((prev) => Math.min(Math.max(prev * scaleDelta, 0.1), 3));
-    };
-
     // Обновляем timeline при изменении scale или planeOffset
     useEffect(() => {
         updateTimeline();
@@ -121,7 +115,6 @@ function TaskManager() {
             className="task-manager"
             onMouseMove={handleMouseMove}
             onMouseUp={handleMouseUp}
-            onWheel={handleWheel}
         >
             <button
                 className="task-manager__button button--add-task"
