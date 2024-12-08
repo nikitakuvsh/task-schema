@@ -117,3 +117,11 @@
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 }
+
+.button--save {
+    background-color: #74f08e;
+}
+
+.button--save:hover {
+    background-color: #6edf87;
+}

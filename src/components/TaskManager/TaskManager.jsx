@@ -149,8 +149,9 @@ function TaskManager() {
                 <LeaderLines blocks={blocks} planeOffset={planeOffset} />
             </div>
             <div className="task-manager__buttons-container">
-                <button className="task-manager__button button--save-schema">Сохранить схему</button>
+                <button className="task-manager__button button--save-schema">Скачать схему</button>
                 <button className="task-manager__button button--load-schema">Загрузить схему</button>
+                <button className="task-manager__button button--save">Сохранить</button>
             </div>
         </div>
     );
