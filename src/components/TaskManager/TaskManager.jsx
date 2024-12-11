@@ -17,6 +17,10 @@ function TaskManager() {
     const [scale, setScale] = useState(1);
     const [asideVisible, setAsideVisible] = useState(false);
     const [prevplaneOffset, setPrevPlaneOffset] = useState(-5000);
+    const [connections, setConnections] = useState([]); // Список соединений [source, target]
+    const [sourceBlock, setSourceBlock] = useState(null);
+    const [currentSourceIndex, setCurrentSourceIndex] = useState(null);
+    const [showConnectionMenu, setShowConnectionMenu] = useState(false);
 
     // Для timeline
     const [startDate, setStartDate] = useState(new Date());
@@ -109,6 +113,11 @@ function TaskManager() {
     }, [scale, planeOffset]);
 
     const handleCreateConnectedBlock = (sourceIndex) => {
+        if (sourceIndex < 0 || sourceIndex >= blocks.length) {
+            console.error("Invalid source index:", sourceIndex);
+            return;
+        }
+    
         setBlocks((prev) => {
             const sourceBlock = prev[sourceIndex];
             const newBlock = {
@@ -119,7 +128,53 @@ function TaskManager() {
             };
             return [...prev, newBlock];
         });
+    
+        setConnections((prev) => [...prev, [sourceIndex, blocks.length]]);
     };
+    
+    
+
+    const handleBlockClick = (blockIndex) => {
+        if (sourceBlock === null) {
+            // Если источник не выбран, выбираем текущий блок
+            setSourceBlock(blockIndex);
+        } else {
+            // Если источник выбран, добавляем соединение
+            setConnections((prev) => [...prev, [sourceBlock, blockIndex]]);
+            setSourceBlock(null); // Сбрасываем источник
+        }
+    };
+
+    const handleRemoveInvalidConnections = () => {
+        setConnections((prev) =>
+            prev.filter(([source, target]) => {
+                const isValidSource = source >= 0 && source < blocks.length;
+                const isValidTarget = target >= 0 && target < blocks.length;
+                return isValidSource && isValidTarget;
+            })
+        );
+    };
+    
+    const handleStartConnection = (sourceIndex) => {
+        setCurrentSourceIndex(sourceIndex);
+        setShowConnectionMenu(true); // Показываем меню
+    };
+
+    const handleSelectTarget = (targetIndex) => {
+        if (currentSourceIndex !== null) {
+            setConnections((prevConnections) => [
+                ...prevConnections,
+                [currentSourceIndex, targetIndex],
+            ]);
+            setCurrentSourceIndex(null); // Сбрасываем выбор источника
+            setShowConnectionMenu(false); // Закрываем меню
+        }
+    };
+
+    useEffect(() => {
+        // Удаляем некорректные соединения при изменении блоков
+        handleRemoveInvalidConnections();
+    }, [blocks]);
     
     return (
         <div
@@ -144,6 +199,7 @@ function TaskManager() {
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
                         onDoubleClick={() => setAsideVisible(true)}
+                        onCreateChoiceConnectedBlock={handleBlockClick}
                     />
                 ))}
                 {draggingButton && currentBlock && (
@@ -157,7 +213,8 @@ function TaskManager() {
                         }}
                     ></div>
                 )}
-                <LeaderLines blocks={blocks} planeOffset={planeOffset} />
+                <LeaderLines blocks={blocks} connections={connections} />
+
             </div>
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">Скачать схему</button>

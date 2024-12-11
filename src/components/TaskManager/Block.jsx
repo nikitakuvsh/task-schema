@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onCreateChoiceConnectedBlock }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });

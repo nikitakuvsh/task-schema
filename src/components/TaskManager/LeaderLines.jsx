@@ -1,33 +1,62 @@
 import React, { useEffect, useRef } from "react";
 import LeaderLine from "react-leader-line";
 
-function LeaderLines({ blocks, planeOffset }) {
+function LeaderLines({ blocks, connections = [] }) {
     const leaderLinesRef = useRef([]);
 
     useEffect(() => {
         // Удаляем старые линии
-        leaderLinesRef.current.forEach((line) => line.remove());
-        leaderLinesRef.current = [];
-
-        blocks.forEach((block, index) => {
-            if (index < blocks.length - 1) {
-                const startBlock = document.getElementById(`block-${index}`);
-                const endBlock = document.getElementById(`block-${index + 1}`);
-                if (startBlock && endBlock) {
-                    const line = new LeaderLine(startBlock, endBlock, {
-                        color: "#000",
-                        size: 3,
-                        dash: { animation: true },
-                        startPlug: "disc",
-                        endPlug: "arrow1",
-                    });
-                    leaderLinesRef.current.push(line);
+        leaderLinesRef.current.forEach((line) => {
+            if (line && typeof line.remove === "function") {
+                try {
+                    line.remove();
+                } catch (error) {
+                    console.error("Error removing LeaderLine:", error);
                 }
             }
         });
-    }, [blocks, planeOffset]); // Обновляем линии при изменении блоков или смещения плоскости
-
-    return null;
+        leaderLinesRef.current = [];
+    
+        // Создаем новые линии
+        if (connections && connections.length > 0) {
+            connections.forEach(([sourceIndex, targetIndex]) => {
+                const startBlock = document.getElementById(`block-${sourceIndex}`);
+                const endBlock = document.getElementById(`block-${targetIndex}`);
+                if (startBlock && endBlock) {
+                    try {
+                        const line = new LeaderLine(startBlock, endBlock, {
+                            color: "#007bff",
+                            size: 3,
+                            startPlug: "disc",
+                            endPlug: "arrow1",
+                            dash: true,
+                        });
+                        leaderLinesRef.current.push(line);
+                    } catch (error) {
+                        console.error("Error creating LeaderLine:", error);
+                    }
+                } else {
+                    console.warn(
+                        `Elements not found for connection: sourceIndex=${sourceIndex}, targetIndex=${targetIndex}`
+                    );
+                }
+            });
+        }
+    
+        // Очистка при размонтировании
+        return () => {
+            leaderLinesRef.current.forEach((line) => {
+                if (line && typeof line.remove === "function") {
+                    try {
+                        line.remove();
+                    } catch (error) {
+                        console.error("Error removing LeaderLine on cleanup:", error);
+                    }
+                }
+            });
+        };
+    }, [connections]);
+    
 }
 
 export default LeaderLines;
