@@ -132,7 +132,13 @@ function TaskManager() {
         setConnections((prev) => [...prev, [sourceIndex, blocks.length]]);
     };
     
-    
+    const handleRenameBlock = (index, newName) => {
+        setBlocks((prevBlocks) =>
+            prevBlocks.map((block, i) =>
+                i === index ? { ...block, name: newName } : block
+            )
+        );
+    };
 
     const handleBlockClick = (blockIndex) => {
         if (sourceBlock === null) {
@@ -211,6 +217,7 @@ function TaskManager() {
                         onCreateChoiceConnectedBlock={handleStartConnection} // Передаем функцию для создания соединений
                         onSelectTarget={handleSelectTarget}
                         allBlocks={blocks}
+                        onRenameBlock={handleRenameBlock}
                     />
                 ))}
                 {draggingButton && currentBlock && (

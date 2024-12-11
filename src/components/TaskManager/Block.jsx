@@ -8,6 +8,7 @@ function Block({
     onDoubleClick,
     onConnectBlocks, // Функция для обработки связи
     allBlocks = [], // Убедитесь, что проп по умолчанию - пустой массив
+    onRenameBlock,
 }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
@@ -50,6 +51,7 @@ function Block({
     const handleSaveName = (e) => {
         e.preventDefault();
         setIsRenaming(false);
+        onRenameBlock(index, nameTask); // Передаём новое имя блока в родительский компонент
     };
 
     const handleOpenColorPicker = () => {
