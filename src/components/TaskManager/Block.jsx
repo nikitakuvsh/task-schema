@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -100,6 +100,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock }) {
             }}
             onMouseDown={(e) => e.button === 0 && onMouseDown(e, index)}
             onContextMenu={handleRightClick}
+            onDoubleClick={onDoubleClick}
         >
             {isRenaming ? (
                 <form onSubmit={handleSaveName}>

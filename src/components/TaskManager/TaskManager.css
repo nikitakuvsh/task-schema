@@ -125,3 +125,90 @@
 .button--save:hover {
     background-color: #6edf87;
 }
+
+.task-manager__aside-right {
+    position: fixed;
+    background-color: #f4f7fc; /* Нежно-голубой фон */
+    height: 100vh;
+    width: 20rem;
+    right: 0;
+    top: 0;
+    z-index: 10000;
+    padding: 3rem 1.5rem;
+    font-size: 1.3rem;
+    color: #333; /* Тёмный текст для контраста */
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1); /* Лёгкая тень */
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    overflow-y: auto; /* Скролл при переполнении */
+    overflow-x: hidden;
+    border-left: 1px solid #e1e5ea; /* Лёгкая рамка слева */
+}
+
+.task-manager__aside-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; /* Пробел между блоками */
+}
+
+.aside__block {
+    background-color: #ffffff; /* Белый фон для блоков */
+    border-radius: 8px; /* Лёгкое скругление углов */
+    padding: 1.2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* Тень для блока */
+    border: 1px solid #eaeaea; /* Лёгкая рамка */
+}
+
+.aside__block-title {
+    font-size: 1.6rem;
+    font-weight: bold;
+    margin-bottom: 0.8rem;
+    text-align: left; /* Выравнивание по левому краю */
+    color: #2a2a2a; /* Тёмный цвет для заголовков */
+    position: relative;
+}
+
+.aside__block-title::before,
+.aside__block-title::after {
+    content: '';
+    position: absolute;
+    top: 100%; /* Линии теперь выравниваются вертикально */
+    width: 100%;
+    margin: 0 30%;
+    height: 1px;
+    background-color: #dcdcdc; /* Светло-серая линия */
+}
+
+.aside__block-title::before {
+    left: -35%;
+}
+
+.aside__block-title::after {
+    right: -35%;
+}
+
+.aside__block-props {
+    font-size: 1.3rem;
+    line-height: 1.6;
+    color: #555; /* Нейтральный серый цвет текста */
+    text-align: left; /* Текст выровнен по левому краю */
+    word-wrap: break-word; /* Перенос длинных строк */
+}
+
+.aside__close-btn {
+    position: absolute;
+    top: -1rem;
+    right: 1rem;
+    background-color: transparent; /* Прозрачный фон */
+    border: none; /* Убираем границы */
+    font-size: 1.5rem;
+    color: #333; /* Цвет символа */
+    cursor: pointer;
+    transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.aside__close-btn:hover {
+    transform: scale(1.2); /* Увеличение кнопки при наведении */
+    color: #ff4d4d; /* Красный цвет при наведении */
+}

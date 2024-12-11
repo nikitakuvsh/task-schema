@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Block from "./Block";
 import LeaderLines from "./LeaderLines";
 import Timeline from "./TimeLine";
+import AsideRight from "./AsideRight";
 import "./TaskManager.css";
 
 function TaskManager() {
@@ -14,6 +15,7 @@ function TaskManager() {
     const [draggingPlane, setDraggingPlane] = useState(false);
     const [startPlaneDrag, setStartPlaneDrag] = useState({ x: 0, y: 0 });
     const [scale, setScale] = useState(1);
+    const [asideVisible, setAsideVisible] = useState(false);
 
     // Для timeline
     const [startDate, setStartDate] = useState(new Date());
@@ -110,7 +112,6 @@ function TaskManager() {
         });
     };
     
-
     return (
         <div
             className="task-manager"
@@ -133,6 +134,7 @@ function TaskManager() {
                         block={block}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
+                        onDoubleClick={() => setAsideVisible(true)}
                     />
                 ))}
                 {draggingButton && currentBlock && (
@@ -153,6 +155,7 @@ function TaskManager() {
                 <button className="task-manager__button button--load-schema">Загрузить схему</button>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
+            {asideVisible && (<AsideRight onClose={() => setAsideVisible(false)}/>)}
         </div>
     );
 }
