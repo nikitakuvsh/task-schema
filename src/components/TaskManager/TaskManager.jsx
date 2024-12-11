@@ -26,7 +26,7 @@ function TaskManager() {
 
     const updateTimeline = () => {
         const offsetDifference = planeOffset.x + Math.abs(prevplaneOffset); // Разница смещений
-        const timeOffset = offsetDifference * 1000 / scale; // Рассчитываем изменение времени
+        const timeOffset = offsetDifference * 10000 / scale; // Рассчитываем изменение времени
     
         // Вычисляем новые даты
         const newStartDate = new Date(startDate.getTime() - timeOffset);
