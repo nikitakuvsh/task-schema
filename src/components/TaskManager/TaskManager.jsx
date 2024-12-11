@@ -213,7 +213,7 @@ function TaskManager() {
                         }}
                     ></div>
                 )}
-                <LeaderLines blocks={blocks} connections={connections} />
+                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset}/>
 
             </div>
             <div className="task-manager__buttons-container">

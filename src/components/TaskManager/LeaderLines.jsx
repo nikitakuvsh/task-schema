@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import LeaderLine from "react-leader-line";
 
-function LeaderLines({ blocks, connections = [] }) {
+function LeaderLines({ blocks, connections = [], planeOffset}) {
     const leaderLinesRef = useRef([]);
 
     useEffect(() => {
@@ -25,11 +25,11 @@ function LeaderLines({ blocks, connections = [] }) {
                 if (startBlock && endBlock) {
                     try {
                         const line = new LeaderLine(startBlock, endBlock, {
-                            color: "#007bff",
+                            color: "#000",
                             size: 3,
+                            dash: { animation: true },
                             startPlug: "disc",
                             endPlug: "arrow1",
-                            dash: true,
                         });
                         leaderLinesRef.current.push(line);
                     } catch (error) {
@@ -55,7 +55,7 @@ function LeaderLines({ blocks, connections = [] }) {
                 }
             });
         };
-    }, [connections]);
+    }, [connections, blocks, planeOffset]);
     
 }
 
