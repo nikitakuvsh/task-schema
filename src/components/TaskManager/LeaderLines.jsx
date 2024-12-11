@@ -5,7 +5,6 @@ function LeaderLines({ blocks, connections = [], planeOffset}) {
     const leaderLinesRef = useRef([]);
 
     useEffect(() => {
-        // Удаляем старые линии
         leaderLinesRef.current.forEach((line) => {
             if (line && typeof line.remove === "function") {
                 try {
@@ -17,7 +16,6 @@ function LeaderLines({ blocks, connections = [], planeOffset}) {
         });
         leaderLinesRef.current = [];
     
-        // Создаем новые линии
         if (connections && connections.length > 0) {
             connections.forEach(([sourceIndex, targetIndex]) => {
                 const startBlock = document.getElementById(`block-${sourceIndex}`);
@@ -43,7 +41,6 @@ function LeaderLines({ blocks, connections = [], planeOffset}) {
             });
         }
     
-        // Очистка при размонтировании
         return () => {
             leaderLinesRef.current.forEach((line) => {
                 if (line && typeof line.remove === "function") {

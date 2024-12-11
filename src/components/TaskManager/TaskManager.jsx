@@ -17,29 +17,24 @@ function TaskManager() {
     const [scale, setScale] = useState(1);
     const [asideVisible, setAsideVisible] = useState(false);
     const [prevplaneOffset, setPrevPlaneOffset] = useState(-5000);
-    const [connections, setConnections] = useState([]); // Список соединений [source, target]
+    const [connections, setConnections] = useState([]);
     const [sourceBlock, setSourceBlock] = useState(null);
     const [currentSourceIndex, setCurrentSourceIndex] = useState(null);
     const [showConnectionMenu, setShowConnectionMenu] = useState(false);
-
-    // Для timeline
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
 
     const timeInterval = 12 * 60 * 60 * 1000; // 12 часов
 
     const updateTimeline = () => {
-        const offsetDifference = planeOffset.x + Math.abs(prevplaneOffset); // Разница смещений
-        const timeOffset = offsetDifference * 10000 / scale; // Рассчитываем изменение времени
-    
-        // Вычисляем новые даты
+        const offsetDifference = planeOffset.x + Math.abs(prevplaneOffset);
+        const timeOffset = offsetDifference * 10000 / scale;
         const newStartDate = new Date(startDate.getTime() - timeOffset);
         const newEndDate = new Date(Math.abs(newStartDate.getTime()) + timeInterval / scale);
     
-        // Обновляем состояния
         setStartDate(newStartDate);
         setEndDate(newEndDate);
-        setPrevPlaneOffset(planeOffset.x); // Сохраняем текущее смещение как предыдущее
+        setPrevPlaneOffset(planeOffset.x);
     };
     
 
@@ -107,7 +102,6 @@ function TaskManager() {
         }
     };
 
-    // Обновляем timeline при изменении scale или planeOffset
     useEffect(() => {
         updateTimeline();
     }, [scale, planeOffset]);
@@ -121,7 +115,7 @@ function TaskManager() {
         setBlocks((prev) => {
             const sourceBlock = prev[sourceIndex];
             const newBlock = {
-                x: sourceBlock.x + 250, // Расстояние справа от исходного блока
+                x: sourceBlock.x + 250,
                 y: sourceBlock.y,
                 width: 200,
                 height: 200,
@@ -140,19 +134,7 @@ function TaskManager() {
         );
     };
 
-    const handleBlockClick = (blockIndex) => {
-        if (sourceBlock === null) {
-            // Если источник не выбран, выбираем текущий блок
-            setSourceBlock(blockIndex);
-        } else {
-            // Если источник выбран, добавляем соединение
-            setConnections((prev) => [...prev, [sourceBlock, blockIndex]]);
-            setSourceBlock(null); // Сбрасываем источник
-        }
-    };
-
     const handleConnectBlocks = (sourceIndex, targetIndex) => {
-        // Добавляем соединение между блоками в список
         setConnections((prevConnections) => [
             ...prevConnections,
             [sourceIndex, targetIndex],
@@ -180,56 +162,34 @@ function TaskManager() {
                 ...prevConnections,
                 [currentSourceIndex, targetIndex],
             ]);
-            setCurrentSourceIndex(null); // Сбрасываем выбор источника
-            setShowConnectionMenu(false); // Закрываем меню
+            setCurrentSourceIndex(null);
+            setShowConnectionMenu(false);
         }
     };
 
     useEffect(() => {
-        // Удаляем некорректные соединения при изменении блоков
         handleRemoveInvalidConnections();
     }, [blocks]);
     
     return (
-        <div
-            className="task-manager"
-            onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
-        >
+        <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
             <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
             <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()}/>
-            <div
-                className="task-manager__plane"
-                onMouseDown={handlePlaneMouseDown}
-                style={{
-                    transform: `translate(${planeOffset.x}px, ${planeOffset.y}px) scale(${scale})`,
-                }}
-            >
+            <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown} style={{transform: `translate(${planeOffset.x}px, ${planeOffset.y}px) scale(${scale})`,}}>
                 {blocks.map((block, index) => (
-                    <Block
-                        key={index}
-                        index={index}
-                        block={block}
+                    <Block key={index} index={index} block={block}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
                         onDoubleClick={() => setAsideVisible(true)}
                         onConnectBlocks={handleConnectBlocks}
-                        onCreateChoiceConnectedBlock={handleStartConnection} // Передаем функцию для создания соединений
+                        onCreateChoiceConnectedBlock={handleStartConnection}
                         onSelectTarget={handleSelectTarget}
                         allBlocks={blocks}
                         onRenameBlock={handleRenameBlock}
                     />
                 ))}
                 {draggingButton && currentBlock && (
-                    <div
-                        className="task-manager__block task-manager__block--temp"
-                        style={{
-                            left: `${currentBlock.x}px`,
-                            top: `${currentBlock.y}px`,
-                            width: `${currentBlock.width}px`,
-                            height: `${currentBlock.height}px`,
-                        }}
-                    ></div>
+                    <div className="task-manager__block task-manager__block--temp" style={{left: `${currentBlock.x}px`, top: `${currentBlock.y}px`, width: `${currentBlock.width}px`, height: `${currentBlock.height}px`,}}></div>
                 )}
                 <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset}/>
 

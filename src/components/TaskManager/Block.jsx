@@ -1,25 +1,13 @@
 import React, { useState, useRef } from "react";
 
-function Block({
-    block,
-    index,
-    onMouseDown,
-    onCreateConnectedBlock,
-    onDoubleClick,
-    onConnectBlocks, // Функция для обработки связи
-    allBlocks = [], // Убедитесь, что проп по умолчанию - пустой массив
-    onRenameBlock,
-}) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const [isRenaming, setIsRenaming] = useState(false);
     const [color, setColor] = useState(block.color || "#ffffff");
-    const [blockSize, setBlockSize] = useState({
-        width: block.width,
-        height: block.height,
-    });
-    const [showConnectionMenu, setShowConnectionMenu] = useState(false); // Для отображения меню выбора блока
+    const [blockSize, setBlockSize] = useState({ width: block.width, height: block.height, });
+    const [showConnectionMenu, setShowConnectionMenu] = useState(false);
     const colorInputRef = useRef(null);
     const blockRef = useRef(null);
 
@@ -39,6 +27,20 @@ function Block({
     };
 
     React.useEffect(() => {
+        const handleOutsideClick = (e) => {
+            if (showConnectionMenu && !e.target.closest(".connection-menu")) {
+                setShowConnectionMenu(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleOutsideClick);
+
+        return () => {
+            document.removeEventListener("mousedown", handleOutsideClick);
+        };
+    }, [showConnectionMenu])
+
+    React.useEffect(() => {
         if (showMenu) document.addEventListener("click", handleOutsideClick);
         return () => document.removeEventListener("click", handleOutsideClick);
     }, [showMenu]);
@@ -51,7 +53,7 @@ function Block({
     const handleSaveName = (e) => {
         e.preventDefault();
         setIsRenaming(false);
-        onRenameBlock(index, nameTask); // Передаём новое имя блока в родительский компонент
+        onRenameBlock(index, nameTask);
     };
 
     const handleOpenColorPicker = () => {
@@ -65,7 +67,7 @@ function Block({
 
     const handleResize = (e, direction) => {
         e.preventDefault();
-        e.stopPropagation(); // Отключаем передвижение блока
+        e.stopPropagation();
         const startX = e.clientX;
         const startY = e.clientY;
         const startWidth = blockSize.width;
@@ -92,17 +94,17 @@ function Block({
 
     const handleCreateConnectedBlockClick = () => {
         setShowMenu(false);
-        onCreateConnectedBlock(index); // Вызываем функцию из пропсов с текущим индексом
+        onCreateConnectedBlock(index);
     };
 
     const handleConnectToExistingBlockClick = () => {
         setShowMenu(false);
-        setShowConnectionMenu(true); // Открыть меню выбора существующего блока
+        setShowConnectionMenu(true);
     };
 
     const handleSelectBlockForConnection = (targetIndex) => {
-        onConnectBlocks(index, targetIndex); // Соединение блоков
-        setShowConnectionMenu(false); // Закрыть меню после выбора
+        onConnectBlocks(index, targetIndex);
+        setShowConnectionMenu(false);
     };
 
     return (
@@ -125,98 +127,41 @@ function Block({
         >
             {isRenaming ? (
                 <form onSubmit={handleSaveName}>
-                    <input
-                        autoFocus
-                        type="text"
-                        value={nameTask}
-                        onChange={(e) => setNameTask(e.target.value)}
-                        onBlur={() => setIsRenaming(false)}
-                        style={{
-                            padding: "4px",
-                            fontSize: "14px",
-                            width: "80%",
-                            boxSizing: "border-box",
-                        }}
-                    />
+                    <input className="block__set-name-task" autoFocus type="text" value={nameTask} onChange={(e) => setNameTask(e.target.value)} onBlur={() => setIsRenaming(false)} />
                 </form>
             ) : (
                 <h3 className="block__title">{nameTask || `Блок ${index + 1}`}</h3>
             )}
 
             {showMenu && (
-                <ul
-                    className="block__menu"
-                    style={{
-                        top: `${menuPosition.top}px`,
-                        left: `${menuPosition.left}px`,
-                    }}
-                >
-                    <li className="block__menu-li" onClick={handleRename}>
-                        Переименовать
-                    </li>
-                    <li className="block__menu-li" onClick={handleOpenColorPicker}>
-                        Изменить цвет
-                    </li>
+                <ul className="block__menu" style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px`, }}>
+                    <li className="block__menu-li" onClick={handleRename}>Переименовать</li>
+                    <li className="block__menu-li" onClick={handleOpenColorPicker}>Изменить цвет</li>
                     <li className="block__menu-li">Загрузить документ</li>
-                    <li className="block__menu-li" onClick={handleCreateConnectedBlockClick}>
-                        Создать новый блок со связью
-                    </li>
-                    <li className="block__menu-li" onClick={handleConnectToExistingBlockClick}>
-                        Связать с существующим блоком
-                    </li>
+                    <li className="block__menu-li" onClick={handleCreateConnectedBlockClick}>Создать новый блок со связью</li>
+                    <li className="block__menu-li" onClick={handleConnectToExistingBlockClick}>Связать с существующим блоком</li>
                     <li className="block__menu-li">Удалить</li>
                 </ul>
             )}
 
-            {/* Меню для выбора блока для связи */}
             {showConnectionMenu && (
                 <ul
                     className="connection-menu"
-                    style={{
-                        top: `${menuPosition.top}px`,
-                        left: `${menuPosition.left}px`,
-                    }}
-                >
+                    style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px`, }}>
                     {Array.isArray(allBlocks) && allBlocks.length > 0
                         ? allBlocks.map(
-                              (block, targetIndex) =>
-                                  targetIndex !== index && (
-                                      <li
-                                          key={targetIndex}
-                                          className="connection-menu-item"
-                                          onClick={() => handleSelectBlockForConnection(targetIndex)}
-                                      >
-                                          {block.name || `Блок ${targetIndex + 1}`}
-                                      </li>
-                                  )
-                          )
+                            (block, targetIndex) =>
+                                targetIndex !== index && (
+                                    <li key={targetIndex} className="connection-menu-item" onClick={() => handleSelectBlockForConnection(targetIndex)}>{block.name || `Блок ${targetIndex + 1}`} </li>
+                                )
+                        )
                         : <li>Нет доступных блоков для связи</li>}
                 </ul>
             )}
 
-            {/* Скрытый input для выбора цвета */}
-            <input
-                ref={colorInputRef}
-                type="color"
-                value={color}
-                onChange={handleColorChange}
-                style={{ display: "none" }}
-            />
+            <input ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{ display: "none" }} />
 
-            {/* Ручка для изменения размера */}
-            <div
-                className="resize-handle resize-handle--bottom-right"
-                style={{
-                    position: "absolute",
-                    bottom: "0",
-                    right: "0",
-                    width: "10px",
-                    height: "10px",
-                    background: "rgba(0, 0, 0, 0.5)",
-                    cursor: "nwse-resize",
-                }}
-                onMouseDown={(e) => handleResize(e, "bottom-right")}
-            />
+            <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")} />
         </div>
     );
 }
