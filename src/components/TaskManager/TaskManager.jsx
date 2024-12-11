@@ -30,7 +30,7 @@ function TaskManager() {
     
         // Вычисляем новые даты
         const newStartDate = new Date(startDate.getTime() - timeOffset);
-        const newEndDate = new Date(newStartDate.getTime() - timeInterval / scale);
+        const newEndDate = new Date(Math.abs(newStartDate.getTime()) + timeInterval / scale);
     
         // Обновляем состояния
         setStartDate(newStartDate);
