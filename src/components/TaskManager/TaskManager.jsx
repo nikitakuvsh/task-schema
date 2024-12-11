@@ -16,6 +16,7 @@ function TaskManager() {
     const [startPlaneDrag, setStartPlaneDrag] = useState({ x: 0, y: 0 });
     const [scale, setScale] = useState(1);
     const [asideVisible, setAsideVisible] = useState(false);
+    const [prevplaneOffset, setPrevPlaneOffset] = useState(-5000);
 
     // Для timeline
     const [startDate, setStartDate] = useState(new Date());
@@ -24,11 +25,19 @@ function TaskManager() {
     const timeInterval = 12 * 60 * 60 * 1000; // 12 часов
 
     const updateTimeline = () => {
-        const newStartDate = new Date(startDate.getTime() - planeOffset.x * 1000 / scale);
-        const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
+        const offsetDifference = planeOffset.x + Math.abs(prevplaneOffset); // Разница смещений
+        const timeOffset = offsetDifference * 1000 / scale; // Рассчитываем изменение времени
+    
+        // Вычисляем новые даты
+        const newStartDate = new Date(startDate.getTime() - timeOffset);
+        const newEndDate = new Date(newStartDate.getTime() - timeInterval / scale);
+    
+        // Обновляем состояния
         setStartDate(newStartDate);
         setEndDate(newEndDate);
+        setPrevPlaneOffset(planeOffset.x); // Сохраняем текущее смещение как предыдущее
     };
+    
 
     const handleAddTaskMouseDown = (e) => {
         setDraggingButton(true);
