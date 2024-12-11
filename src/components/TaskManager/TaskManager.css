@@ -199,7 +199,7 @@
 .aside__close-btn {
     position: absolute;
     top: -1rem;
-    right: 1rem;
+    right: -0.7rem;
     background-color: transparent; /* Прозрачный фон */
     border: none; /* Убираем границы */
     font-size: 1.5rem;
