@@ -145,6 +145,14 @@ function TaskManager() {
         }
     };
 
+    const handleConnectBlocks = (sourceIndex, targetIndex) => {
+        // Добавляем соединение между блоками в список
+        setConnections((prevConnections) => [
+            ...prevConnections,
+            [sourceIndex, targetIndex],
+        ]);
+    };
+
     const handleRemoveInvalidConnections = () => {
         setConnections((prev) =>
             prev.filter(([source, target]) => {
@@ -157,7 +165,7 @@ function TaskManager() {
     
     const handleStartConnection = (sourceIndex) => {
         setCurrentSourceIndex(sourceIndex);
-        setShowConnectionMenu(true); // Показываем меню
+        setShowConnectionMenu(true);
     };
 
     const handleSelectTarget = (targetIndex) => {
@@ -199,7 +207,10 @@ function TaskManager() {
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
                         onDoubleClick={() => setAsideVisible(true)}
-                        onCreateChoiceConnectedBlock={handleBlockClick}
+                        onConnectBlocks={handleConnectBlocks}
+                        onCreateChoiceConnectedBlock={handleStartConnection} // Передаем функцию для создания соединений
+                        onSelectTarget={handleSelectTarget}
+                        allBlocks={blocks}
                     />
                 ))}
                 {draggingButton && currentBlock && (

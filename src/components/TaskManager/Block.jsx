@@ -1,6 +1,14 @@
 import React, { useState, useRef } from "react";
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onCreateChoiceConnectedBlock }) {
+function Block({
+    block,
+    index,
+    onMouseDown,
+    onCreateConnectedBlock,
+    onDoubleClick,
+    onConnectBlocks, // Функция для обработки связи
+    allBlocks = [], // Убедитесь, что проп по умолчанию - пустой массив
+}) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -10,6 +18,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         width: block.width,
         height: block.height,
     });
+    const [showConnectionMenu, setShowConnectionMenu] = useState(false); // Для отображения меню выбора блока
     const colorInputRef = useRef(null);
     const blockRef = useRef(null);
 
@@ -84,6 +93,16 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         onCreateConnectedBlock(index); // Вызываем функцию из пропсов с текущим индексом
     };
 
+    const handleConnectToExistingBlockClick = () => {
+        setShowMenu(false);
+        setShowConnectionMenu(true); // Открыть меню выбора существующего блока
+    };
+
+    const handleSelectBlockForConnection = (targetIndex) => {
+        onConnectBlocks(index, targetIndex); // Соединение блоков
+        setShowConnectionMenu(false); // Закрыть меню после выбора
+    };
+
     return (
         <div
             id={`block-${index}`}
@@ -137,9 +156,39 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                         Изменить цвет
                     </li>
                     <li className="block__menu-li">Загрузить документ</li>
-                    <li className="block__menu-li" onClick={handleCreateConnectedBlockClick}>Создать новый блок со связью</li>
-                    <li className="block__menu-li">Связать с существующим блоком</li>
+                    <li className="block__menu-li" onClick={handleCreateConnectedBlockClick}>
+                        Создать новый блок со связью
+                    </li>
+                    <li className="block__menu-li" onClick={handleConnectToExistingBlockClick}>
+                        Связать с существующим блоком
+                    </li>
                     <li className="block__menu-li">Удалить</li>
+                </ul>
+            )}
+
+            {/* Меню для выбора блока для связи */}
+            {showConnectionMenu && (
+                <ul
+                    className="connection-menu"
+                    style={{
+                        top: `${menuPosition.top}px`,
+                        left: `${menuPosition.left}px`,
+                    }}
+                >
+                    {Array.isArray(allBlocks) && allBlocks.length > 0
+                        ? allBlocks.map(
+                              (block, targetIndex) =>
+                                  targetIndex !== index && (
+                                      <li
+                                          key={targetIndex}
+                                          className="connection-menu-item"
+                                          onClick={() => handleSelectBlockForConnection(targetIndex)}
+                                      >
+                                          {block.name || `Блок ${targetIndex + 1}`}
+                                      </li>
+                                  )
+                          )
+                        : <li>Нет доступных блоков для связи</li>}
                 </ul>
             )}
 
