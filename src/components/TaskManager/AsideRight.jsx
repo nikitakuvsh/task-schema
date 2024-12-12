@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import downloadIcon from '../../img/download-icon.svg';
 
 function AsideRight({ onClose }) {
     const [openBlocks, setOpenBlocks] = useState({});
@@ -38,7 +39,24 @@ function AsideRight({ onClose }) {
                         <span className={`aside__toggle-icon ${openBlocks.files ? "open" : ""}`}>▼</span>
                     </h2>
                     {openBlocks.files && (
-                        <p className="aside__block-props">Здеся будут загруженные файлы</p>
+                        <div className="aside__block-files">
+                            <div className="aide__block-file">
+                                <h2 className="aside__block-file-title">Пример файла 1</h2>
+                                <button className="aside__block-file-download"><img className="aside__block-file-download-icon" src={downloadIcon} alt="скачать файл"/></button>
+                            </div>
+
+                            <div className="aide__block-file">
+                                <h2 className="aside__block-file-title">Пример файла 2</h2>
+                                <button className="aside__block-file-download"><img className="aside__block-file-download-icon" src={downloadIcon} alt="скачать файл"/></button>
+                            </div>
+
+                            <div className="aide__block-file">
+                                <h2 className="aside__block-file-title">Пример файла 3</h2>
+                                <button className="aside__block-file-download"><img className="aside__block-file-download-icon" src={downloadIcon} alt="скачать файл"/></button>
+                            </div>
+                        </div>
+                        
+                        
                     )}
                 </div>
             </div>
