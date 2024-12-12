@@ -8,8 +8,10 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     const [color, setColor] = useState(block.color || "#ffffff");
     const [blockSize, setBlockSize] = useState({ width: block.width, height: block.height, });
     const [showConnectionMenu, setShowConnectionMenu] = useState(false);
+    const [selectedFile, setSelectedFile] = useState(null);
     const colorInputRef = useRef(null);
     const blockRef = useRef(null);
+    const fileInputRef = useRef(null); // Reference to the file input
 
     const handleRightClick = (e) => {
         e.preventDefault();
@@ -107,6 +109,22 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         setShowConnectionMenu(false);
     };
 
+    const handleAddFiles = () => {
+        if (fileInputRef.current) {
+          fileInputRef.current.click();
+        }
+        setShowMenu(false);
+      };
+    
+      const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+          setSelectedFile(file);
+          // Optionally, you can upload the file here or process it further
+          console.log("File selected:", file);
+        }
+      };
+
     return (
         <div
             id={`block-${index}`}
@@ -137,7 +155,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                 <ul className="block__menu" style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px`, }}>
                     <li className="block__menu-li" onClick={handleRename}>Переименовать</li>
                     <li className="block__menu-li" onClick={handleOpenColorPicker}>Изменить цвет</li>
-                    <li className="block__menu-li">Загрузить документ</li>
+                    <li className="block__menu-li" onClick={handleAddFiles}>Загрузить документ</li>
                     <li className="block__menu-li" onClick={handleCreateConnectedBlockClick}>Создать новый блок со связью</li>
                     <li className="block__menu-li" onClick={handleConnectToExistingBlockClick}>Связать с существующим блоком</li>
                     <li className="block__menu-li">Удалить</li>
@@ -160,6 +178,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
             )}
 
             <input ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{ display: "none" }}/>
+            <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileChange}/>
 
             <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")}/>
         </div>
