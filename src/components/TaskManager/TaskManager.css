@@ -273,18 +273,18 @@
 }
 
 .resize-handle {
-    position: "absolute";
-    bottom: "0";
-    right: "0";
-    width: "10px";
-    height: "10px";
-    background: "rgba(0, 0, 0, 0.5)";
-    cursor: "nwse-resize";
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 10px;
+    height: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    cursor: nwse-resize;
 }
 
 .block__set-name-task {
-    padding: "4px";
-    font-size: "14px";
-    width: "80%";
-    box-sizing: "border-box";
+    padding: 4px;
+    font-size: 14px;
+    width: 80%;
+    box-sizing: border-box;
 }
