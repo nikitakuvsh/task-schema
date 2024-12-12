@@ -30,7 +30,12 @@ function AsideRight({ onClose }) {
                         <span className={`aside__toggle-icon ${openBlocks.description ? "open" : ""}`}>▼</span>
                     </h2>
                     {openBlocks.description && (
-                        <p className="aside__block-props">Здеся будет какое-то жёсткое описание</p>
+                       <textarea
+                            className="aside__block-props props-input"
+                            defaultValue='Введите своё описание'
+                            rows="3"
+                            cols="20" // Количество символов в строке
+                        />
                     )}
                 </div>
                 <div className="aside__block">
@@ -54,9 +59,7 @@ function AsideRight({ onClose }) {
                                 <h2 className="aside__block-file-title">Пример файла 3</h2>
                                 <button className="aside__block-file-download"><img className="aside__block-file-download-icon" src={downloadIcon} alt="скачать файл"/></button>
                             </div>
-                        </div>
-                        
-                        
+                        </div> 
                     )}
                 </div>
             </div>

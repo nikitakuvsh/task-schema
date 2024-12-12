@@ -358,3 +358,14 @@
     color: #45a049; /* Цвет текста меняется при наведении */
     cursor: pointer;
 }
+
+.props-input {
+    text-wrap: wrap;
+    word-wrap: break-word;
+    resize: none;
+    outline: none;
+}
+
+.props-input::-moz-focus-inner {
+    border: none;
+}
