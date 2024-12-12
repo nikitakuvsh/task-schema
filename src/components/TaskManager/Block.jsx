@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock,}) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -127,7 +127,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         >
             {isRenaming ? (
                 <form onSubmit={handleSaveName}>
-                    <input className="block__set-name-task" autoFocus type="text" value={nameTask} onChange={(e) => setNameTask(e.target.value)} onBlur={() => setIsRenaming(false)} />
+                    <input className="block__set-name-task" autoFocus type="text" value={nameTask} onChange={(e) => setNameTask(e.target.value)} onBlur={() => setIsRenaming(false)}/>
                 </form>
             ) : (
                 <h3 className="block__title">{nameTask || `Блок ${index + 1}`}</h3>
@@ -147,7 +147,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
             {showConnectionMenu && (
                 <ul
                     className="connection-menu"
-                    style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px`, }}>
+                    style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px`,}}>
                     {Array.isArray(allBlocks) && allBlocks.length > 0
                         ? allBlocks.map(
                             (block, targetIndex) =>
@@ -159,9 +159,9 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                 </ul>
             )}
 
-            <input ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{ display: "none" }} />
+            <input ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{ display: "none" }}/>
 
-            <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")} />
+            <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")}/>
         </div>
     );
 }
