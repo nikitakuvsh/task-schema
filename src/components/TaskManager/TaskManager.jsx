@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Block from "./Block";
 import LeaderLines from "./LeaderLines";
 import Timeline from "./TimeLine";
@@ -23,6 +23,17 @@ function TaskManager() {
     const [endDate, setEndDate] = useState(new Date());
     const [prevplaneOffset, setPrevPlaneOffset] = useState(0);
     const timeInterval = 12 * 60 * 60 * 1000; // 12 часов
+    const leaderLinesUpdateRef = useRef(null);
+
+    const handleLeaderLinesUpdate = (updateFn) => {
+        leaderLinesUpdateRef.current = updateFn;
+    };
+
+    const forceUpdateLines = () => {
+        if (leaderLinesUpdateRef.current) {
+            leaderLinesUpdateRef.current();
+        }
+    }
 
     const handleAddTaskMouseDown = (e) => {
         e.stopPropagation(); // Остановим всплытие события
@@ -222,6 +233,7 @@ function TaskManager() {
                         onSelectTarget={handleSelectTarget}
                         allBlocks={blocks}
                         onRenameBlock={handleRenameBlock}
+                        forceUpdateLines={forceUpdateLines}
                     />
                 ))}
                 {draggingButton && currentBlock && (
@@ -235,7 +247,7 @@ function TaskManager() {
                         }}
                     ></div>
                 )}
-                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} />
+                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} />
             </div>
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">Скачать схему</button>

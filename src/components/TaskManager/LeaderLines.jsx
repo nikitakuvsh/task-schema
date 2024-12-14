@@ -1,10 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import LeaderLine from "react-leader-line";
 
-function LeaderLines({ blocks, connections = [], planeOffset}) {
+function LeaderLines({ blocks, connections = [], planeOffset, onUpdateLines }) {
     const leaderLinesRef = useRef([]);
 
-    useEffect(() => {
+    const updateLines = () => {
         leaderLinesRef.current.forEach((line) => {
             if (line && typeof line.remove === "function") {
                 try {
@@ -15,7 +15,7 @@ function LeaderLines({ blocks, connections = [], planeOffset}) {
             }
         });
         leaderLinesRef.current = [];
-    
+
         if (connections && connections.length > 0) {
             connections.forEach(([sourceIndex, targetIndex]) => {
                 const startBlock = document.getElementById(`block-${sourceIndex}`);
@@ -40,7 +40,11 @@ function LeaderLines({ blocks, connections = [], planeOffset}) {
                 }
             });
         }
-    
+    };
+
+    useEffect(() => {
+        updateLines();
+
         return () => {
             leaderLinesRef.current.forEach((line) => {
                 if (line && typeof line.remove === "function") {
@@ -53,7 +57,15 @@ function LeaderLines({ blocks, connections = [], planeOffset}) {
             });
         };
     }, [connections, blocks, planeOffset]);
-    
+
+    // Экспорт метода для внешнего обновления
+    useEffect(() => {
+        if (onUpdateLines) {
+            onUpdateLines(updateLines);
+        }
+    }, [onUpdateLines]);
+
+    return null;
 }
 
 export default LeaderLines;

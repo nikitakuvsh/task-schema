@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock,}) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -74,25 +74,33 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         const startY = e.clientY;
         const startWidth = blockSize.width;
         const startHeight = blockSize.height;
-
+    
         const onMouseMove = (moveEvent) => {
             const deltaX = moveEvent.clientX - startX;
             const deltaY = moveEvent.clientY - startY;
-
-            setBlockSize((prev) => ({
-                width: direction.includes("right") ? startWidth + deltaX : prev.width,
-                height: direction.includes("bottom") ? startHeight + deltaY : prev.height,
-            }));
+    
+            setBlockSize((prev) => {
+                const newSize = {
+                    width: direction.includes("right") ? startWidth + deltaX : prev.width,
+                    height: direction.includes("bottom") ? startHeight + deltaY : prev.height,
+                };
+    
+                // Обновление линий в реальном времени
+                forceUpdateLines();
+    
+                return newSize;
+            });
         };
-
+    
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
         };
-
+    
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
     };
+    
 
     const handleCreateConnectedBlockClick = () => {
         setShowMenu(false);
