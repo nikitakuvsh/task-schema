@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import Block from "./Block";
 import LeaderLines from "./LeaderLines";
 import Timeline from "./TimeLine";
@@ -11,32 +11,16 @@ function TaskManager() {
     const [currentBlock, setCurrentBlock] = useState(null);
     const [draggingBlockIndex, setDraggingBlockIndex] = useState(null);
     const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
-    const [planeOffset, setPlaneOffset] = useState({ x: -5000, y: -5000 });
-    const [draggingPlane, setDraggingPlane] = useState(false);
+    const [draggingPlane, setDraggingPlane] = useState(false); // Для перемещения всех блоков
     const [startPlaneDrag, setStartPlaneDrag] = useState({ x: 0, y: 0 });
+    const [planeOffset, setPlaneOffset] = useState({ x: 0, y: 0 });
     const [scale, setScale] = useState(1);
     const [asideVisible, setAsideVisible] = useState(false);
-    const [prevplaneOffset, setPrevPlaneOffset] = useState(-5000);
     const [connections, setConnections] = useState([]);
-    const [sourceBlock, setSourceBlock] = useState(null);
     const [currentSourceIndex, setCurrentSourceIndex] = useState(null);
     const [showConnectionMenu, setShowConnectionMenu] = useState(false);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
-
-    const timeInterval = 12 * 60 * 60 * 1000; // 12 часов
-
-    const updateTimeline = () => {
-        const offsetDifference = planeOffset.x + Math.abs(prevplaneOffset);
-        const timeOffset = offsetDifference * 10000 / scale;
-        const newStartDate = new Date(startDate.getTime() - timeOffset);
-        const newEndDate = new Date(Math.abs(newStartDate.getTime()) + timeInterval / scale);
-    
-        setStartDate(newStartDate);
-        setEndDate(newEndDate);
-        setPrevPlaneOffset(planeOffset.x);
-    };
-    
 
     const handleAddTaskMouseDown = (e) => {
         setDraggingButton(true);
@@ -50,12 +34,20 @@ function TaskManager() {
 
     const handleMouseMove = (e) => {
         if (draggingPlane) {
-            const deltaX = (e.clientX - startPlaneDrag.x) / 1.3;
-            const deltaY = (e.clientY - startPlaneDrag.y) / 1.3;
-            setPlaneOffset((prev) => ({
-                x: prev.x + deltaX,
-                y: prev.y + deltaY,
-            }));
+            // Вычисляем смещение мыши
+            const deltaX = e.clientX - startPlaneDrag.x;
+            const deltaY = e.clientY - startPlaneDrag.y;
+
+            // Обновляем положение всех блоков
+            setBlocks((prevBlocks) =>
+                prevBlocks.map((block) => ({
+                    ...block,
+                    x: block.x + deltaX,
+                    y: block.y + deltaY,
+                }))
+            );
+
+            // Обновляем начальную точку для следующего вычисления
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
         if (draggingBlockIndex !== null) {
@@ -86,7 +78,7 @@ function TaskManager() {
             setCurrentBlock(null);
         }
         setDraggingBlockIndex(null);
-        setDraggingPlane(false);
+        setDraggingPlane(false); // Завершаем перемещение всех блоков
     };
 
     const handleBlockMouseDown = (e, index) => {
@@ -97,21 +89,17 @@ function TaskManager() {
 
     const handlePlaneMouseDown = (e) => {
         if (!draggingButton && draggingBlockIndex === null) {
-            setDraggingPlane(true);
+            setDraggingPlane(true); // Включаем режим перемещения всех блоков
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
     };
-
-    useEffect(() => {
-        updateTimeline();
-    }, [scale, planeOffset]);
 
     const handleCreateConnectedBlock = (sourceIndex) => {
         if (sourceIndex < 0 || sourceIndex >= blocks.length) {
             console.error("Invalid source index:", sourceIndex);
             return;
         }
-    
+
         setBlocks((prev) => {
             const sourceBlock = prev[sourceIndex];
             const newBlock = {
@@ -122,10 +110,10 @@ function TaskManager() {
             };
             return [...prev, newBlock];
         });
-    
+
         setConnections((prev) => [...prev, [sourceIndex, blocks.length]]);
     };
-    
+
     const handleRenameBlock = (index, newName) => {
         setBlocks((prevBlocks) =>
             prevBlocks.map((block, i) =>
@@ -150,7 +138,7 @@ function TaskManager() {
             })
         );
     };
-    
+
     const handleStartConnection = (sourceIndex) => {
         setCurrentSourceIndex(sourceIndex);
         setShowConnectionMenu(true);
@@ -170,14 +158,25 @@ function TaskManager() {
     useEffect(() => {
         handleRemoveInvalidConnections();
     }, [blocks]);
-    
+
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
-            <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()}/>
-            <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown} style={{transform: `translate(${planeOffset.x}px, ${planeOffset.y}px) scale(${scale})`,}}>
+            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>
+                Добавить задачу
+            </button>
+            <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} />
+            <div
+                className="task-manager__plane"
+                onMouseDown={handlePlaneMouseDown}
+                style={{
+                    transform: `scale(${scale})`,
+                }}
+            >
                 {blocks.map((block, index) => (
-                    <Block key={index} index={index} block={block}
+                    <Block
+                        key={index}
+                        index={index}
+                        block={block}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
                         onDoubleClick={() => setAsideVisible(true)}
@@ -189,17 +188,24 @@ function TaskManager() {
                     />
                 ))}
                 {draggingButton && currentBlock && (
-                    <div className="task-manager__block task-manager__block--temp" style={{left: `${currentBlock.x}px`, top: `${currentBlock.y}px`, width: `${currentBlock.width}px`, height: `${currentBlock.height}px`,}}></div>
+                    <div
+                        className="task-manager__block task-manager__block--temp"
+                        style={{
+                            left: `${currentBlock.x}px`,
+                            top: `${currentBlock.y}px`,
+                            width: `${currentBlock.width}px`,
+                            height: `${currentBlock.height}px`,
+                        }}
+                    ></div>
                 )}
-                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset}/>
-
+                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} />
             </div>
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">Скачать схему</button>
                 <button className="task-manager__button button--load-schema">Загрузить схему</button>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
-            {asideVisible && (<AsideRight onClose={() => setAsideVisible(false)}/>)}
+            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} />}
         </div>
     );
 }
