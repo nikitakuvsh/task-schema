@@ -11,7 +11,7 @@ function TaskManager() {
     const [currentBlock, setCurrentBlock] = useState(null);
     const [draggingBlockIndex, setDraggingBlockIndex] = useState(null);
     const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
-    const [draggingPlane, setDraggingPlane] = useState(false); // Для перемещения всех блоков
+    const [draggingPlane, setDraggingPlane] = useState(false);
     const [startPlaneDrag, setStartPlaneDrag] = useState({ x: 0, y: 0 });
     const [planeOffset, setPlaneOffset] = useState({ x: 0, y: 0 });
     const [scale, setScale] = useState(1);
@@ -36,7 +36,7 @@ function TaskManager() {
     }
 
     const handleAddTaskMouseDown = (e) => {
-        e.stopPropagation(); // Остановим всплытие события
+        e.stopPropagation();
         setDraggingButton(true);
         const initialX = e.clientX - planeOffset.x;
         const initialY = e.clientY - planeOffset.y;
@@ -116,7 +116,7 @@ function TaskManager() {
 
     const handlePlaneMouseDown = (e) => {
         if (!draggingButton && draggingBlockIndex === null) {
-            setDraggingPlane(true); // Включаем режим перемещения всех блоков
+            setDraggingPlane(true);
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
     };
@@ -191,40 +191,25 @@ function TaskManager() {
     }, [planeOffset, scale]);
 
     const updateTimeline = () => {
-    // Рассчитать временной сдвиг на основе planeOffset.x
     const offsetDifference = planeOffset.x - prevplaneOffset;
     const timeOffset = offsetDifference * 10000 / scale;
 
-    // Обновить временные границы
     const newStartDate = new Date(startDate.getTime() - timeOffset);
     const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
 
     setStartDate(newStartDate);
     setEndDate(newEndDate);
-
-    // Сохранить новое значение offset для последующих расчётов
     setPrevPlaneOffset(planeOffset.x);
 };
 
 
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
-            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>
-                Добавить задачу
-            </button>
+            <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
             <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} />
-            <div
-                className="task-manager__plane"
-                onMouseDown={handlePlaneMouseDown}
-                style={{
-                    transform: `scale(${scale})`,
-                }}
-            >
+            <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown}>
                 {blocks.map((block, index) => (
-                    <Block
-                        key={index}
-                        index={index}
-                        block={block}
+                    <Block key={index} index={index} block={block}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
                         onDoubleClick={() => setAsideVisible(true)}
@@ -237,8 +222,7 @@ function TaskManager() {
                     />
                 ))}
                 {draggingButton && currentBlock && (
-                    <div
-                        className="task-manager__block task-manager__block--temp"
+                    <div className="task-manager__block task-manager__block--temp"
                         style={{
                             left: `${currentBlock.x}px`,
                             top: `${currentBlock.y}px`,
