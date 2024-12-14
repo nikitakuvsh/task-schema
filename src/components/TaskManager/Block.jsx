@@ -6,7 +6,6 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const [isRenaming, setIsRenaming] = useState(false);
     const [color, setColor] = useState(block.color || "#ffffff");
-    const [viewInputColor, setViewInputColor] = useState(false);
     const [blockSize, setBlockSize] = useState({ width: block.width, height: block.height });
     const [showConnectionMenu, setShowConnectionMenu] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
@@ -48,18 +47,12 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     };
 
     const handleOpenColorPicker = () => {
-        if (colorInputRef.current) {
-            setViewInputColor(true);
-            setTimeout(() => {
-                colorInputRef.current.click();
-            }, 0);
-        }
+        if (colorInputRef.current) colorInputRef.current.click();
         setShowMenu(false);
     };
 
     const handleColorChange = (e) => {
         setColor(e.target.value);
-        setViewInputColor(false);
     };
 
     const handleResize = (e, direction) => {
@@ -172,8 +165,8 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                 </ul>
             )}
 
-            <input className="block__input-color--hidden" ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{top: `${menuPosition.top + 25}px`, left: `${menuPosition.left}px`, zIndex: -1000, display: viewInputColor ? '' : 'none'}} />
-            <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileChange} />
+            <input className="block__input-color--hidden" ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{top: `${menuPosition.top + 25}px`, left: `${menuPosition.left}px`}} />
+            <input className="block__input-file--hidden" ref={fileInputRef} type="file" onChange={handleFileChange} />
 
             <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")} />
         </div>

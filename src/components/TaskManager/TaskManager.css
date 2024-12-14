@@ -371,8 +371,10 @@
     border: none;
 }
 
-.block__input-color--hidden {
+.block__input-color--hidden,
+.block__input-file--hidden {
     width: 0;
     height: 0;
     position: absolute;
+    z-index: -1000;
 }
