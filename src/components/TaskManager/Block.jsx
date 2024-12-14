@@ -1,4 +1,6 @@
 import React, { useState, useRef } from "react";
+import workerIcon from '../../img/icons/worker.svg';
+import downloadIcon from '../../img/icons/download-icon.svg';
 
 function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, }) {
     const [nameTask, setNameTask] = useState("");
@@ -167,6 +169,11 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
 
             <input className="block__input-color--hidden" ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{top: `${menuPosition.top + 25}px`, left: `${menuPosition.left}px`}} />
             <input className="block__input-file--hidden" ref={fileInputRef} type="file" onChange={handleFileChange} />
+
+            <div className="block__icons-container">
+                <img className="block__icon icon--download-files" alt="Скачать файлы" title="Скачать файлы" src={downloadIcon} />
+                <img className="block__icon icon--worker" alt="Исполнитель" title="Исполнитель" src={workerIcon} />
+            </div>
 
             <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")} />
         </div>

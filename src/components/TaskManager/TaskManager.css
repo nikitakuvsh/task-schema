@@ -378,3 +378,19 @@
     position: absolute;
     z-index: -1000;
 }
+
+.block__icons-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: row-reverse;
+    margin-right: 4%;
+}
+
+.block__icon {
+    width: 17%;
+    height: 17%;
+    cursor: pointer;
+    z-index: 10;
+}

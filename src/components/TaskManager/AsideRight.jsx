@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import downloadIcon from '../../img/download-icon.svg';
+import downloadIcon from '../../img/icons/download-icon.svg';
 
 function AsideRight({ onClose }) {
     const [openBlocks, setOpenBlocks] = useState({});
