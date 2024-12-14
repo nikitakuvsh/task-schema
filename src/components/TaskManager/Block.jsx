@@ -1,17 +1,18 @@
 import React, { useState, useRef } from "react";
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const [isRenaming, setIsRenaming] = useState(false);
     const [color, setColor] = useState(block.color || "#ffffff");
-    const [blockSize, setBlockSize] = useState({ width: block.width, height: block.height, });
+    const [viewInputColor, setViewInputColor] = useState(false);
+    const [blockSize, setBlockSize] = useState({ width: block.width, height: block.height });
     const [showConnectionMenu, setShowConnectionMenu] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
     const colorInputRef = useRef(null);
     const blockRef = useRef(null);
-    const fileInputRef = useRef(null); // Reference to the file input
+    const fileInputRef = useRef(null);
 
     const handleRightClick = (e) => {
         e.preventDefault();
@@ -29,23 +30,11 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     };
 
     React.useEffect(() => {
-        const handleOutsideClick = (e) => {
-            if (showConnectionMenu && !e.target.closest(".connection-menu")) {
-                setShowConnectionMenu(false);
-            }
-        };
-
         document.addEventListener("mousedown", handleOutsideClick);
-
         return () => {
             document.removeEventListener("mousedown", handleOutsideClick);
         };
-    }, [showConnectionMenu])
-
-    React.useEffect(() => {
-        if (showMenu) document.addEventListener("click", handleOutsideClick);
-        return () => document.removeEventListener("click", handleOutsideClick);
-    }, [showMenu]);
+    }, []);
 
     const handleRename = () => {
         setIsRenaming(true);
@@ -59,12 +48,18 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     };
 
     const handleOpenColorPicker = () => {
-        if (colorInputRef.current) colorInputRef.current.click();
+        if (colorInputRef.current) {
+            setViewInputColor(true);
+            setTimeout(() => {
+                colorInputRef.current.click();
+            }, 0);
+        }
         setShowMenu(false);
     };
 
     const handleColorChange = (e) => {
         setColor(e.target.value);
+        setViewInputColor(false);
     };
 
     const handleResize = (e, direction) => {
@@ -74,33 +69,31 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         const startY = e.clientY;
         const startWidth = blockSize.width;
         const startHeight = blockSize.height;
-    
+
         const onMouseMove = (moveEvent) => {
             const deltaX = moveEvent.clientX - startX;
             const deltaY = moveEvent.clientY - startY;
-    
+
             setBlockSize((prev) => {
                 const newSize = {
                     width: direction.includes("right") ? startWidth + deltaX : prev.width,
                     height: direction.includes("bottom") ? startHeight + deltaY : prev.height,
                 };
-    
-                // Обновление линий в реальном времени
+
                 forceUpdateLines();
-    
+
                 return newSize;
             });
         };
-    
+
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
         };
-    
+
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
     };
-    
 
     const handleCreateConnectedBlockClick = () => {
         setShowMenu(false);
@@ -119,33 +112,27 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
 
     const handleAddFiles = () => {
         if (fileInputRef.current) {
-          fileInputRef.current.click();
+            fileInputRef.current.click();
         }
         setShowMenu(false);
-      };
-    
-      const handleFileChange = (e) => {
+    };
+
+    const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-          setSelectedFile(file);
-          // Optionally, you can upload the file here or process it further
-          console.log("File selected:", file);
+            setSelectedFile(file);
+            console.log("File selected:", file);
         }
-      };
+    };
 
     return (
-        <div
-            id={`block-${index}`}
-            ref={blockRef}
-            className="task-manager__block"
+        <div id={`block-${index}`} ref={blockRef} className="task-manager__block"
             style={{
                 left: `${block.x}px`,
                 top: `${block.y}px`,
                 width: `${blockSize.width}px`,
                 height: `${blockSize.height}px`,
                 backgroundColor: color,
-                position: "absolute",
-                boxSizing: "border-box",
             }}
             onMouseDown={(e) => e.button === 0 && onMouseDown(e, index)}
             onContextMenu={handleRightClick}
@@ -153,14 +140,14 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         >
             {isRenaming ? (
                 <form onSubmit={handleSaveName}>
-                    <input className="block__set-name-task" autoFocus type="text" value={nameTask} onChange={(e) => setNameTask(e.target.value)} onBlur={() => setIsRenaming(false)}/>
+                    <input className="block__set-name-task" autoFocus type="text" value={nameTask} onChange={(e) => setNameTask(e.target.value)} onBlur={() => setIsRenaming(false)} />
                 </form>
             ) : (
                 <h3 className="block__title">{nameTask || `Блок ${index + 1}`}</h3>
             )}
 
             {showMenu && (
-                <ul className="block__menu" style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px`, }}>
+                <ul className="block__menu" style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px` }}>
                     <li className="block__menu-li" onClick={handleRename}>Переименовать</li>
                     <li className="block__menu-li" onClick={handleOpenColorPicker}>Изменить цвет</li>
                     <li className="block__menu-li" onClick={handleAddFiles}>Загрузить документ</li>
@@ -171,24 +158,24 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
             )}
 
             {showConnectionMenu && (
-                <ul
-                    className="connection-menu"
-                    style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px`,}}>
+                <ul className="connection-menu" style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px` }} >
                     {Array.isArray(allBlocks) && allBlocks.length > 0
                         ? allBlocks.map(
                             (block, targetIndex) =>
                                 targetIndex !== index && (
-                                    <li key={targetIndex} className="connection-menu-item" onClick={() => handleSelectBlockForConnection(targetIndex)}>{block.name || `Блок ${targetIndex + 1}`} </li>
+                                    <li key={targetIndex} className="connection-menu-item" onClick={() => handleSelectBlockForConnection(targetIndex)}>
+                                        {block.name || `Блок ${targetIndex + 1}`}
+                                    </li>
                                 )
                         )
                         : <li>Нет доступных блоков для связи</li>}
                 </ul>
             )}
 
-            <input ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{ display: "none" }}/>
-            <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileChange}/>
+            <input ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{ position: "absolute", top: `${menuPosition.top + 25}px`, left: `${menuPosition.left}px`, zIndex: -1000, display: viewInputColor ? '' : 'none'}} />
+            <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileChange} />
 
-            <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")}/>
+            <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")} />
         </div>
     );
 }
