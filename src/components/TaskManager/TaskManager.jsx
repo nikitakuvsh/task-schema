@@ -21,24 +21,28 @@ function TaskManager() {
     const [showConnectionMenu, setShowConnectionMenu] = useState(false);
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
+    const [prevplaneOffset, setPrevPlaneOffset] = useState(0);
+    const timeInterval = 12 * 60 * 60 * 1000; // 12 часов
 
     const handleAddTaskMouseDown = (e) => {
+        e.stopPropagation(); // Остановим всплытие события
         setDraggingButton(true);
+        const initialX = e.clientX - planeOffset.x;
+        const initialY = e.clientY - planeOffset.y;
+    
         setCurrentBlock({
-            x: e.clientX - planeOffset.x,
-            y: e.clientY - planeOffset.y,
+            x: initialX,
+            y: initialY,
             width: 200,
             height: 200,
         });
     };
-
+    
     const handleMouseMove = (e) => {
         if (draggingPlane) {
-            // Вычисляем смещение мыши
             const deltaX = e.clientX - startPlaneDrag.x;
             const deltaY = e.clientY - startPlaneDrag.y;
-
-            // Обновляем положение всех блоков
+    
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block) => ({
                     ...block,
@@ -46,46 +50,58 @@ function TaskManager() {
                     y: block.y + deltaY,
                 }))
             );
-
-            // Обновляем начальную точку для следующего вычисления
+    
+            setPlaneOffset((prev) => ({
+                x: prev.x + deltaX,
+                y: prev.y + deltaY,
+            }));
+    
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
+    
+        if (draggingButton && currentBlock) {
+            const newX = e.clientX - planeOffset.x;
+            const newY = e.clientY - planeOffset.y;
+    
+            setCurrentBlock((prev) => ({
+                ...prev,
+                x: newX - prev.width / 2,
+                y: newY - prev.height / 2,
+            }));
+        }
+    
         if (draggingBlockIndex !== null) {
             const deltaX = e.clientX - startDrag.x;
             const deltaY = e.clientY - startDrag.y;
-            setBlocks((prev) =>
-                prev.map((block, index) =>
+    
+            setBlocks((prevBlocks) =>
+                prevBlocks.map((block, index) =>
                     index === draggingBlockIndex
                         ? { ...block, x: block.x + deltaX, y: block.y + deltaY }
                         : block
                 )
             );
+    
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
-        if (draggingButton && currentBlock) {
-            setCurrentBlock((prev) => ({
-                ...prev,
-                x: e.clientX - planeOffset.x - 50,
-                y: e.clientY - planeOffset.y - 50,
-            }));
-        }
     };
-
-    const handleMouseUp = () => {
-        if (draggingButton && currentBlock) {
-            setBlocks((prev) => [...prev, currentBlock]);
-            setDraggingButton(false);
-            setCurrentBlock(null);
-        }
-        setDraggingBlockIndex(null);
-        setDraggingPlane(false); // Завершаем перемещение всех блоков
-    };
-
+    
     const handleBlockMouseDown = (e, index) => {
         e.stopPropagation();
         setDraggingBlockIndex(index);
         setStartDrag({ x: e.clientX, y: e.clientY });
     };
+    
+    const handleMouseUp = () => {
+        if (draggingButton && currentBlock) {
+            setBlocks((prevBlocks) => [...prevBlocks, currentBlock]);
+            setDraggingButton(false);
+            setCurrentBlock(null);
+        }
+        setDraggingBlockIndex(null);
+        setDraggingPlane(false);
+    };
+    
 
     const handlePlaneMouseDown = (e) => {
         if (!draggingButton && draggingBlockIndex === null) {
@@ -158,6 +174,27 @@ function TaskManager() {
     useEffect(() => {
         handleRemoveInvalidConnections();
     }, [blocks]);
+
+    useEffect(() => {
+        updateTimeline();
+    }, [planeOffset, scale]);
+
+    const updateTimeline = () => {
+    // Рассчитать временной сдвиг на основе planeOffset.x
+    const offsetDifference = planeOffset.x - prevplaneOffset;
+    const timeOffset = offsetDifference * 10000 / scale;
+
+    // Обновить временные границы
+    const newStartDate = new Date(startDate.getTime() - timeOffset);
+    const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
+
+    setStartDate(newStartDate);
+    setEndDate(newEndDate);
+
+    // Сохранить новое значение offset для последующих расчётов
+    setPrevPlaneOffset(planeOffset.x);
+};
+
 
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
