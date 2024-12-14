@@ -370,3 +370,9 @@
 .props-input::-moz-focus-inner {
     border: none;
 }
+
+.block__input-color--hidden {
+    width: 0;
+    height: 0;
+    position: absolute;
+}

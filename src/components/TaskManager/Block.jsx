@@ -172,7 +172,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                 </ul>
             )}
 
-            <input ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{ position: "absolute", top: `${menuPosition.top + 25}px`, left: `${menuPosition.left}px`, zIndex: -1000, display: viewInputColor ? '' : 'none'}} />
+            <input className="block__input-color--hidden" ref={colorInputRef} type="color" value={color} onChange={handleColorChange} style={{top: `${menuPosition.top + 25}px`, left: `${menuPosition.left}px`, zIndex: -1000, display: viewInputColor ? '' : 'none'}} />
             <input ref={fileInputRef} type="file" style={{ display: "none" }} onChange={handleFileChange} />
 
             <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")} />
