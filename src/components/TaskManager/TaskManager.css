@@ -385,12 +385,13 @@
     right: 0;
     display: flex;
     justify-content: space-between;
-    margin: 3%;
+    width: 100%;
+    padding: 3%;
 }
 
 .block__icon {
-    width: 20%;
-    height: 20%;
+    width: 2.5rem;
+    height: 2.5rem;
     cursor: pointer;
     z-index: 10;
 }
