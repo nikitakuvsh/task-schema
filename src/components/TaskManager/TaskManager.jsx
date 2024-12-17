@@ -13,7 +13,7 @@ function TaskManager() {
     const [startDrag, setStartDrag] = useState({ x: 0, y: 0 });
     const [draggingPlane, setDraggingPlane] = useState(false);
     const [startPlaneDrag, setStartPlaneDrag] = useState({ x: 0, y: 0 });
-    const [planeOffset, setPlaneOffset] = useState({ x: 0, y: 0 });
+    const [planeOffset, setPlaneOffset] = useState({ x: 0, y: 0, xTimeline: 0 });
     const [scale, setScale] = useState(1);
     const [asideVisible, setAsideVisible] = useState(false);
     const [connections, setConnections] = useState([]);
@@ -48,6 +48,8 @@ function TaskManager() {
         const offsetX = planeOffset.x || 0;
         const offsetY = planeOffset.y || 0;
 
+        console.log(offsetX, offsetY);
+
         if (scale === 0) {
             console.error("Scale is zero, cannot divide by zero.");
             return;
@@ -55,6 +57,8 @@ function TaskManager() {
 
         const adjustedX = (mouseX - offsetX) / scale;
         const adjustedY = (mouseY - offsetY) / scale;
+
+        console.log(adjustedX, adjustedY);
 
         setCurrentBlock({
             x: adjustedX,
@@ -80,6 +84,7 @@ function TaskManager() {
             setPlaneOffset((prev) => ({
                 x: prev.x,
                 y: prev.y,
+                xTimeline: prev.x + deltaX,
             }));
 
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
@@ -266,7 +271,7 @@ function TaskManager() {
     }, [planeOffset, scale]);
 
     const updateTimeline = () => {
-        const offsetDifference = planeOffset.x - prevplaneOffset;
+        const offsetDifference = planeOffset.xTimeline - prevplaneOffset;
         const timeOffset = offsetDifference * 10000 / scale;
 
         const newStartDate = new Date(startDate.getTime() - timeOffset);
