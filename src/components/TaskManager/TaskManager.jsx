@@ -308,17 +308,7 @@ function TaskManager() {
                     ></div>
                 )}
                 {selection && (
-                    <div
-                        style={{
-                            position: 'absolute',
-                            left: `${selection.x}px`,
-                            top: `${selection.y}px`,
-                            width: `${selection.width}px`,
-                            height: `${selection.height}px`,
-                            border: '2px dashed blue',
-                            pointerEvents: 'none',
-                        }}
-                    />
+                    <div className="block--select" style={{left: `${selection.x}px`, top: `${selection.y}px`, width: `${selection.width}px`, height: `${selection.height}px`,}}/>
                 )}
                 <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} />
             </div>

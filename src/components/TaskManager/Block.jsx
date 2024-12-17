@@ -128,7 +128,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                 top: `${block.y}px`,
                 width: `${blockSize.width}px`,
                 height: `${blockSize.height}px`,
-                backgroundColor: isSelected ? 'blue' : color,
+                backgroundColor: isSelected ? 'rgb(3, 184, 255)' : color,
             }}
             onMouseDown={(e) => e.button === 0 && onMouseDown(e, index)}
             onContextMenu={handleRightClick}
