@@ -38,22 +38,39 @@ function TaskManager() {
     const handleAddTaskMouseDown = (e) => {
         e.stopPropagation();
         setDraggingButton(true);
-        const initialX = e.clientX - planeOffset.x;
-        const initialY = e.clientY - planeOffset.y;
-    
+
+        const mouseX = e.clientX;
+        const mouseY = e.clientY;
+
+        const offsetX = planeOffset.x || 0;
+        const offsetY = planeOffset.y || 0;
+
+        if (scale === 0) {
+            console.error("Scale is zero, cannot divide by zero.");
+            return;
+        }
+
+        const adjustedX = (mouseX - offsetX) / scale;
+        const adjustedY = (mouseY - offsetY) / scale;
+
         setCurrentBlock({
-            x: initialX,
-            y: initialY,
+            x: adjustedX,
+            y: adjustedY,
             width: 200,
             height: 200,
         });
     };
-    
+
+
+
+
+
+
     const handleMouseMove = (e) => {
         if (draggingPlane) {
             const deltaX = e.clientX - startPlaneDrag.x;
             const deltaY = e.clientY - startPlaneDrag.y;
-    
+
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block) => ({
                     ...block,
@@ -61,30 +78,40 @@ function TaskManager() {
                     y: block.y + deltaY,
                 }))
             );
-    
+
             setPlaneOffset((prev) => ({
-                x: prev.x + deltaX,
-                y: prev.y + deltaY,
+                x: prev.x,
+                y: prev.y,
             }));
-    
+
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
-    
+
         if (draggingButton && currentBlock) {
-            const newX = e.clientX - planeOffset.x;
-            const newY = e.clientY - planeOffset.y;
-    
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
+
+            const offsetX = planeOffset?.x || 0;
+            const offsetY = planeOffset?.y || 0;
+
+            const adjustedX = (mouseX - offsetX) / scale;
+            const adjustedY = (mouseY - offsetY) / scale;
+
             setCurrentBlock((prev) => ({
                 ...prev,
-                x: newX - prev.width / 2,
-                y: newY - prev.height / 2,
+                x: adjustedX - prev.width / 2,
+                y: adjustedY - prev.height / 2,
             }));
         }
-    
+
+
+
+
+
         if (draggingBlockIndex !== null) {
             const deltaX = e.clientX - startDrag.x;
             const deltaY = e.clientY - startDrag.y;
-    
+
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block, index) =>
                     index === draggingBlockIndex
@@ -92,17 +119,17 @@ function TaskManager() {
                         : block
                 )
             );
-    
+
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
     };
-    
+
     const handleBlockMouseDown = (e, index) => {
         e.stopPropagation();
         setDraggingBlockIndex(index);
         setStartDrag({ x: e.clientX, y: e.clientY });
     };
-    
+
     const handleMouseUp = () => {
         if (draggingButton && currentBlock) {
             setBlocks((prevBlocks) => [...prevBlocks, currentBlock]);
@@ -112,7 +139,7 @@ function TaskManager() {
         setDraggingBlockIndex(null);
         setDraggingPlane(false);
     };
-    
+
 
     const handlePlaneMouseDown = (e) => {
         if (!draggingButton && draggingBlockIndex === null) {
@@ -191,16 +218,16 @@ function TaskManager() {
     }, [planeOffset, scale]);
 
     const updateTimeline = () => {
-    const offsetDifference = planeOffset.x - prevplaneOffset;
-    const timeOffset = offsetDifference * 10000 / scale;
+        const offsetDifference = planeOffset.x - prevplaneOffset;
+        const timeOffset = offsetDifference * 10000 / scale;
 
-    const newStartDate = new Date(startDate.getTime() - timeOffset);
-    const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
+        const newStartDate = new Date(startDate.getTime() - timeOffset);
+        const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
 
-    setStartDate(newStartDate);
-    setEndDate(newEndDate);
-    setPrevPlaneOffset(planeOffset.x);
-};
+        setStartDate(newStartDate);
+        setEndDate(newEndDate);
+        setPrevPlaneOffset(planeOffset.x);
+    };
 
 
     return (
