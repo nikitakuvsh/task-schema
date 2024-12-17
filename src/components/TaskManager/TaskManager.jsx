@@ -63,8 +63,8 @@ function TaskManager() {
         setCurrentBlock({
             x: adjustedX,
             y: adjustedY,
-            width: 200,
-            height: 200,
+            width: 200 * scale,
+            height: 200 * scale,
         });
     };
 
@@ -183,7 +183,25 @@ function TaskManager() {
         setSelection(null);
     };
 
-
+    const handleWheel = (e) => {
+        e.preventDefault();
+        const MIN_SCALE = 0.2; // Минимальный масштаб
+        const MAX_SCALE = 3;   // Максимальный масштаб
+        const SCALE_STEP = 0.1; // Шаг изменения масштаба
+        setScale((prevScale) => {
+            let newScale = prevScale;
+    
+            if (e.deltaY < 0) {
+                // Скролл вверх: увеличение масштаба
+                newScale = Math.min(prevScale + SCALE_STEP, MAX_SCALE);
+            } else if (e.deltaY > 0) {
+                // Скролл вниз: уменьшение масштаба
+                newScale = Math.max(prevScale - SCALE_STEP, MIN_SCALE);
+            }
+    
+            return newScale;
+        });
+    }
 
     const handlePlaneMouseDown = (e) => {
         if (e.button === 1 && !draggingButton && draggingBlockIndex === null) {
@@ -212,8 +230,8 @@ function TaskManager() {
             const newBlock = {
                 x: sourceBlock.x + 250,
                 y: sourceBlock.y,
-                width: 200,
-                height: 200,
+                width: 200 * scale,
+                height: 200 * scale,
             };
             return [...prev, newBlock];
         });
@@ -284,7 +302,7 @@ function TaskManager() {
 
 
     return (
-        <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp}>
+        <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
             <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
             <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} />
             <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown}>
