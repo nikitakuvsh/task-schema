@@ -24,8 +24,8 @@ function TaskManager() {
     const [prevplaneOffset, setPrevPlaneOffset] = useState(0);
     const timeInterval = 12 * 60 * 60 * 1000; // 12 часов
     const leaderLinesUpdateRef = useRef(null);
-    const [selection, setSelection] = useState(null); // Для хранения области выделения
-    const [selectedBlocks, setSelectedBlocks] = useState([]); // Для хранения выделенных блоков
+    const [selection, setSelection] = useState(null);
+    const [selectedBlocks, setSelectedBlocks] = useState([]);
 
 
     const handleLeaderLinesUpdate = (updateFn) => {
@@ -68,7 +68,7 @@ function TaskManager() {
         if (draggingPlane) {
             const deltaX = e.clientX - startPlaneDrag.x;
             const deltaY = e.clientY - startPlaneDrag.y;
-    
+
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block) => ({
                     ...block,
@@ -76,20 +76,19 @@ function TaskManager() {
                     y: block.y + deltaY,
                 }))
             );
-    
+
             setPlaneOffset((prev) => ({
                 x: prev.x,
                 y: prev.y,
             }));
-    
+
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
-    
-        // Перемещение уже существующего блока
+
         if (draggingBlockIndex !== null) {
             const deltaX = (e.clientX - startDrag.x) / scale;
             const deltaY = (e.clientY - startDrag.y) / scale;
-    
+
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block, index) =>
                     index === draggingBlockIndex
@@ -97,57 +96,58 @@ function TaskManager() {
                         : block
                 )
             );
-    
+
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
-    
-        // Перетаскивание нового блока при добавлении
+
         if (draggingButton && currentBlock) {
             const mouseX = e.clientX;
             const mouseY = e.clientY;
-    
+
             const offsetX = planeOffset?.x || 0;
             const offsetY = planeOffset?.y || 0;
-    
+
             const adjustedX = (mouseX - offsetX) / scale;
             const adjustedY = (mouseY - offsetY) / scale;
-    
+
             setCurrentBlock((prev) => ({
                 ...prev,
                 x: adjustedX - prev.width / 2,
                 y: adjustedY - prev.height / 2,
             }));
         }
-    
-        // Логика выделения
+
         if (selection && draggingBlockIndex === null && !draggingButton) {
+            const { startX, startY } = selection;
             const mouseX = e.clientX;
             const mouseY = e.clientY;
-    
-            const newX = Math.min(selection.x, mouseX);
-            const newY = Math.min(selection.y, mouseY);
-    
-            const newWidth = Math.abs(mouseX - selection.x);
-            const newHeight = Math.abs(mouseY - selection.y);
-    
+
+            const newX = Math.min(startX, mouseX);
+            const newY = Math.min(startY, mouseY);
+
+            const newWidth = Math.abs(mouseX - startX);
+            const newHeight = Math.abs(mouseY - startY);
+
             setSelection({
                 x: newX,
                 y: newY,
+                startX,
+                startY,
                 width: newWidth,
                 height: newHeight,
             });
-    
+
             const selected = blocks.filter((block) => {
                 const blockLeft = block.x * scale + planeOffset.x;
                 const blockTop = block.y * scale + planeOffset.y;
                 const blockRight = blockLeft + block.width * scale;
                 const blockBottom = blockTop + block.height * scale;
-    
+
                 const selectionLeft = newX;
                 const selectionTop = newY;
                 const selectionRight = newX + newWidth;
                 const selectionBottom = newY + newHeight;
-    
+
                 return (
                     blockRight > selectionLeft &&
                     blockLeft < selectionRight &&
@@ -155,14 +155,11 @@ function TaskManager() {
                     blockTop < selectionBottom
                 );
             });
-    
+
             setSelectedBlocks(selected);
         }
     };
-    
-    
-    
-    
+
     const handleBlockMouseDown = (e, index) => {
         e.stopPropagation();
         setDraggingBlockIndex(index);
@@ -175,12 +172,12 @@ function TaskManager() {
             setDraggingButton(false);
             setCurrentBlock(null);
         }
-    
+
         setDraggingBlockIndex(null);
         setDraggingPlane(false);
-        setSelection(null); // Завершаем выделение
+        setSelection(null);
     };
-    
+
 
 
     const handlePlaneMouseDown = (e) => {
@@ -188,16 +185,16 @@ function TaskManager() {
             setDraggingPlane(true);
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
-    
-        if (e.button === 0 && draggingBlockIndex === null) { // Левая кнопка мыши для выделения
+
+        if (e.button === 0 && draggingBlockIndex === null) {
             const startX = e.clientX;
             const startY = e.clientY;
-    
-            setSelection({ x: startX, y: startY, width: 0, height: 0 });
+
+            setSelection({ x: startX, y: startY, startX, startY, width: 0, height: 0 });
         }
     };
-    
-    
+
+
 
     const handleCreateConnectedBlock = (sourceIndex) => {
         if (sourceIndex < 0 || sourceIndex >= blocks.length) {
@@ -322,7 +319,7 @@ function TaskManager() {
                             pointerEvents: 'none',
                         }}
                     />
-                    )}
+                )}
                 <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} />
             </div>
             <div className="task-manager__buttons-container">
