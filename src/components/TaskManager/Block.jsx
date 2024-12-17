@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import workerIcon from '../../img/icons/worker.svg';
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -14,6 +14,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     const colorInputRef = useRef(null);
     const blockRef = useRef(null);
     const fileInputRef = useRef(null);
+    const isSelected = selectedBlocks.some((b) => b === block);
 
     const handleRightClick = (e) => {
         e.preventDefault();
@@ -121,13 +122,13 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     };
 
     return (
-        <div id={`block-${index}`} ref={blockRef} className="task-manager__block"
+        <div id={`block-${index}`} ref={blockRef} className={`task-manager__block ${isSelected ? 'selected' : ''}`}
             style={{
                 left: `${block.x}px`,
                 top: `${block.y}px`,
                 width: `${blockSize.width}px`,
                 height: `${blockSize.height}px`,
-                backgroundColor: color,
+                backgroundColor: isSelected ? 'blue' : color,
             }}
             onMouseDown={(e) => e.button === 0 && onMouseDown(e, index)}
             onContextMenu={handleRightClick}

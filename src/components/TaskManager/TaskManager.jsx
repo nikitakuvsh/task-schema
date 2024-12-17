@@ -24,6 +24,9 @@ function TaskManager() {
     const [prevplaneOffset, setPrevPlaneOffset] = useState(0);
     const timeInterval = 12 * 60 * 60 * 1000; // 12 часов
     const leaderLinesUpdateRef = useRef(null);
+    const [selection, setSelection] = useState(null); // Для хранения области выделения
+    const [selectedBlocks, setSelectedBlocks] = useState([]); // Для хранения выделенных блоков
+
 
     const handleLeaderLinesUpdate = (updateFn) => {
         leaderLinesUpdateRef.current = updateFn;
@@ -66,7 +69,6 @@ function TaskManager() {
             const deltaX = e.clientX - startPlaneDrag.x;
             const deltaY = e.clientY - startPlaneDrag.y;
     
-            // Обновление блока
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block) => ({
                     ...block,
@@ -75,15 +77,31 @@ function TaskManager() {
                 }))
             );
     
-            // Обновление смещения плоскости
             setPlaneOffset((prev) => ({
-                x: prev.x + deltaX,
-                y: prev.y + deltaY,
+                x: prev.x,
+                y: prev.y,
             }));
     
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
     
+        // Перемещение уже существующего блока
+        if (draggingBlockIndex !== null) {
+            const deltaX = (e.clientX - startDrag.x) / scale;
+            const deltaY = (e.clientY - startDrag.y) / scale;
+    
+            setBlocks((prevBlocks) =>
+                prevBlocks.map((block, index) =>
+                    index === draggingBlockIndex
+                        ? { ...block, x: block.x + deltaX, y: block.y + deltaY }
+                        : block
+                )
+            );
+    
+            setStartDrag({ x: e.clientX, y: e.clientY });
+        }
+    
+        // Перетаскивание нового блока при добавлении
         if (draggingButton && currentBlock) {
             const mouseX = e.clientX;
             const mouseY = e.clientY;
@@ -101,23 +119,50 @@ function TaskManager() {
             }));
         }
     
-        if (draggingBlockIndex !== null) {
-            const deltaX = e.clientX - startDrag.x;
-            const deltaY = e.clientY - startDrag.y;
+        // Логика выделения
+        if (selection && draggingBlockIndex === null && !draggingButton) {
+            const mouseX = e.clientX;
+            const mouseY = e.clientY;
     
-            setBlocks((prevBlocks) =>
-                prevBlocks.map((block, index) =>
-                    index === draggingBlockIndex
-                        ? { ...block, x: block.x + deltaX, y: block.y + deltaY }
-                        : block
-                )
-            );
+            const newX = Math.min(selection.x, mouseX);
+            const newY = Math.min(selection.y, mouseY);
     
-            setStartDrag({ x: e.clientX, y: e.clientY });
+            const newWidth = Math.abs(mouseX - selection.x);
+            const newHeight = Math.abs(mouseY - selection.y);
+    
+            setSelection({
+                x: newX,
+                y: newY,
+                width: newWidth,
+                height: newHeight,
+            });
+    
+            const selected = blocks.filter((block) => {
+                const blockLeft = block.x * scale + planeOffset.x;
+                const blockTop = block.y * scale + planeOffset.y;
+                const blockRight = blockLeft + block.width * scale;
+                const blockBottom = blockTop + block.height * scale;
+    
+                const selectionLeft = newX;
+                const selectionTop = newY;
+                const selectionRight = newX + newWidth;
+                const selectionBottom = newY + newHeight;
+    
+                return (
+                    blockRight > selectionLeft &&
+                    blockLeft < selectionRight &&
+                    blockBottom > selectionTop &&
+                    blockTop < selectionBottom
+                );
+            });
+    
+            setSelectedBlocks(selected);
         }
     };
     
-
+    
+    
+    
     const handleBlockMouseDown = (e, index) => {
         e.stopPropagation();
         setDraggingBlockIndex(index);
@@ -130,9 +175,12 @@ function TaskManager() {
             setDraggingButton(false);
             setCurrentBlock(null);
         }
+    
         setDraggingBlockIndex(null);
         setDraggingPlane(false);
+        setSelection(null); // Завершаем выделение
     };
+    
 
 
     const handlePlaneMouseDown = (e) => {
@@ -140,7 +188,16 @@ function TaskManager() {
             setDraggingPlane(true);
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
+    
+        if (e.button === 0 && draggingBlockIndex === null) { // Левая кнопка мыши для выделения
+            const startX = e.clientX;
+            const startY = e.clientY;
+    
+            setSelection({ x: startX, y: startY, width: 0, height: 0 });
+        }
     };
+    
+    
 
     const handleCreateConnectedBlock = (sourceIndex) => {
         if (sourceIndex < 0 || sourceIndex >= blocks.length) {
@@ -240,6 +297,7 @@ function TaskManager() {
                         allBlocks={blocks}
                         onRenameBlock={handleRenameBlock}
                         forceUpdateLines={forceUpdateLines}
+                        selectedBlocks={selectedBlocks}
                     />
                 ))}
                 {draggingButton && currentBlock && (
@@ -252,6 +310,19 @@ function TaskManager() {
                         }}
                     ></div>
                 )}
+                {selection && (
+                    <div
+                        style={{
+                            position: 'absolute',
+                            left: `${selection.x}px`,
+                            top: `${selection.y}px`,
+                            width: `${selection.width}px`,
+                            height: `${selection.height}px`,
+                            border: '2px dashed blue',
+                            pointerEvents: 'none',
+                        }}
+                    />
+                    )}
                 <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} />
             </div>
             <div className="task-manager__buttons-container">
