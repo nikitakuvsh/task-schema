@@ -61,16 +61,12 @@ function TaskManager() {
         });
     };
 
-
-
-
-
-
     const handleMouseMove = (e) => {
         if (draggingPlane) {
             const deltaX = e.clientX - startPlaneDrag.x;
             const deltaY = e.clientY - startPlaneDrag.y;
-
+    
+            // Обновление блока
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block) => ({
                     ...block,
@@ -78,40 +74,37 @@ function TaskManager() {
                     y: block.y + deltaY,
                 }))
             );
-
+    
+            // Обновление смещения плоскости
             setPlaneOffset((prev) => ({
-                x: prev.x,
-                y: prev.y,
+                x: prev.x + deltaX,
+                y: prev.y + deltaY,
             }));
-
+    
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
-
+    
         if (draggingButton && currentBlock) {
             const mouseX = e.clientX;
             const mouseY = e.clientY;
-
+    
             const offsetX = planeOffset?.x || 0;
             const offsetY = planeOffset?.y || 0;
-
+    
             const adjustedX = (mouseX - offsetX) / scale;
             const adjustedY = (mouseY - offsetY) / scale;
-
+    
             setCurrentBlock((prev) => ({
                 ...prev,
                 x: adjustedX - prev.width / 2,
                 y: adjustedY - prev.height / 2,
             }));
         }
-
-
-
-
-
+    
         if (draggingBlockIndex !== null) {
             const deltaX = e.clientX - startDrag.x;
             const deltaY = e.clientY - startDrag.y;
-
+    
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block, index) =>
                     index === draggingBlockIndex
@@ -119,10 +112,11 @@ function TaskManager() {
                         : block
                 )
             );
-
+    
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
     };
+    
 
     const handleBlockMouseDown = (e, index) => {
         e.stopPropagation();
@@ -142,7 +136,7 @@ function TaskManager() {
 
 
     const handlePlaneMouseDown = (e) => {
-        if (!draggingButton && draggingBlockIndex === null) {
+        if (e.button === 1 && !draggingButton && draggingBlockIndex === null) {
             setDraggingPlane(true);
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
         }
