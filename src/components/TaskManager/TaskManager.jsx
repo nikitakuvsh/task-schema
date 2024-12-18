@@ -26,6 +26,7 @@ function TaskManager() {
     const leaderLinesUpdateRef = useRef(null);
     const [selection, setSelection] = useState(null);
     const [selectedBlocks, setSelectedBlocks] = useState([]);
+    const [selectedBlockIndexes, setSelectedBlockIndexes] = useState([]);
 
 
     const handleLeaderLinesUpdate = (updateFn) => {
@@ -66,6 +67,7 @@ function TaskManager() {
             width: 200 * scale,
             height: 200 * scale,
         });
+
     };
 
     const handleMouseMove = (e) => {
@@ -93,17 +95,19 @@ function TaskManager() {
         if (draggingBlockIndex !== null) {
             const deltaX = (e.clientX - startDrag.x) / scale;
             const deltaY = (e.clientY - startDrag.y) / scale;
-
+        
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block, index) =>
-                    index === draggingBlockIndex
+                    selectedBlockIndexes.includes(index) || index === draggingBlockIndex
                         ? { ...block, x: block.x + deltaX, y: block.y + deltaY }
                         : block
                 )
             );
-
+        
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
+        
+
 
         if (draggingButton && currentBlock) {
             const mouseX = e.clientX;
@@ -126,13 +130,13 @@ function TaskManager() {
             const { startX, startY } = selection;
             const mouseX = e.clientX;
             const mouseY = e.clientY;
-
+        
             const newX = Math.min(startX, mouseX);
             const newY = Math.min(startY, mouseY);
-
+        
             const newWidth = Math.abs(mouseX - startX);
             const newHeight = Math.abs(mouseY - startY);
-
+        
             setSelection({
                 x: newX,
                 y: newY,
@@ -141,18 +145,19 @@ function TaskManager() {
                 width: newWidth,
                 height: newHeight,
             });
-
+        
+            // Сохраняем выделенные блоки для отображения стилей
             const selected = blocks.filter((block) => {
                 const blockLeft = block.x * scale + planeOffset.x;
                 const blockTop = block.y * scale + planeOffset.y;
                 const blockRight = blockLeft + block.width * scale;
                 const blockBottom = blockTop + block.height * scale;
-
+        
                 const selectionLeft = newX;
                 const selectionTop = newY;
                 const selectionRight = newX + newWidth;
                 const selectionBottom = newY + newHeight;
-
+        
                 return (
                     blockRight > selectionLeft &&
                     blockLeft < selectionRight &&
@@ -160,9 +165,53 @@ function TaskManager() {
                     blockTop < selectionBottom
                 );
             });
-
+        
             setSelectedBlocks(selected);
+        
+            // Вычисляем индексы выделенных блоков
+            const selectedIndexes = blocks
+                .map((block, index) => {
+                    const blockLeft = block.x * scale + planeOffset.x;
+                    const blockTop = block.y * scale + planeOffset.y;
+                    const blockRight = blockLeft + block.width * scale;
+                    const blockBottom = blockTop + block.height * scale;
+        
+                    const selectionLeft = newX;
+                    const selectionTop = newY;
+                    const selectionRight = newX + newWidth;
+                    const selectionBottom = newY + newHeight;
+        
+                    if (
+                        blockRight > selectionLeft &&
+                        blockLeft < selectionRight &&
+                        blockBottom > selectionTop &&
+                        blockTop < selectionBottom
+                    ) {
+                        return index; // Возвращаем индекс
+                    }
+                    return null;
+                })
+                .filter((index) => index !== null); // Убираем `null` значения
+        
+            setSelectedBlockIndexes(selectedIndexes);
         }
+        
+        // Логика перемещения выделенных блоков
+        if (draggingBlockIndex !== null) {
+            const deltaX = (e.clientX - startDrag.x) / scale;
+            const deltaY = (e.clientY - startDrag.y) / scale;
+        
+            setBlocks((prevBlocks) =>
+                prevBlocks.map((block) =>
+                    selectedBlocks.includes(block)
+                        ? { ...block, x: block.x + deltaX, y: block.y + deltaY }
+                        : block
+                )
+            );
+        
+            setStartDrag({ x: e.clientX, y: e.clientY });
+        }
+        
     };
 
     const handleBlockMouseDown = (e, index) => {
@@ -333,7 +382,7 @@ function TaskManager() {
                 {selection && (
                     <div className="block--select" style={{left: `${selection.x}px`, top: `${selection.y}px`, width: `${selection.width}px`, height: `${selection.height}px`,}}/>
                 )}
-                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} />
+                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} scale={scale}/>
             </div>
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">Скачать схему</button>
