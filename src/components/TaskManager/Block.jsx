@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import workerIcon from '../../img/icons/worker.svg';
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale }) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -124,10 +124,10 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     return (
         <div id={`block-${index}`} ref={blockRef} className={`task-manager__block ${isSelected ? 'selected' : ''}`}
             style={{
-                left: `${block.x}px`,
-                top: `${block.y}px`,
-                width: `${blockSize.width}px`,
-                height: `${blockSize.height}px`,
+                left: `${block.x * scale}px`,
+                top: `${block.y * scale}px`,
+                width: `${blockSize.width * scale}px`,
+                height: `${blockSize.height * scale}px`,
                 backgroundColor: isSelected ? 'rgb(3, 184, 255)' : color,
             }}
             onMouseDown={(e) => e.button === 0 && onMouseDown(e, index)}

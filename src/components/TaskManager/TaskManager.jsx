@@ -28,7 +28,6 @@ function TaskManager() {
     const [selectedBlocks, setSelectedBlocks] = useState([]);
     const [selectedBlockIndexes, setSelectedBlockIndexes] = useState([]);
 
-
     const handleLeaderLinesUpdate = (updateFn) => {
         leaderLinesUpdateRef.current = updateFn;
     };
@@ -336,10 +335,15 @@ function TaskManager() {
     useEffect(() => {
         updateTimeline();
     }, [planeOffset, scale]);
+    
+    useEffect(() => {
+        forceUpdateLines();
+    }, [scale, blocks, connections]);
+    
 
     const updateTimeline = () => {
         const offsetDifference = planeOffset.xTimeline - prevplaneOffset;
-        const timeOffset = offsetDifference * 10000 / scale;
+        const timeOffset = offsetDifference * 10000 * scale;
 
         const newStartDate = new Date(startDate.getTime() - timeOffset);
         const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
@@ -356,7 +360,7 @@ function TaskManager() {
             <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} />
             <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown}>
                 {blocks.map((block, index) => (
-                    <Block key={index} index={index} block={block}
+                    <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
                         onDoubleClick={() => setAsideVisible(true)}
