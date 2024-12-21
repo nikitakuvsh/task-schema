@@ -27,6 +27,7 @@ function TaskManager() {
     const [selection, setSelection] = useState(null);
     const [selectedBlocks, setSelectedBlocks] = useState([]);
     const [selectedBlockIndexes, setSelectedBlockIndexes] = useState([]);
+    const [cursorTime, setCursorTime] = useState(new Date());
 
     const handleLeaderLinesUpdate = (updateFn) => {
         leaderLinesUpdateRef.current = updateFn;
@@ -81,11 +82,24 @@ function TaskManager() {
         setPrevPlaneOffset(planeOffset.x);
     };
 
-    // const updateCursorTime = () => {
-    //     const offsetDifference = planeOffset.xTimeline - prevplaneOffset;
-    //     const timeOffset = offsetDifference * 10000 * scale;
-    //     const 
-    // };
+    const updateCursorTime = (mouseX) => {
+        // Вычисление общего времени в миллисекундах между границами таймлайна
+        const totalTimelineDuration = endDate.getTime() - startDate.getTime();
+        
+        // Вычисление ширины видимого таймлайна (в пикселях)
+        const timelineWidth = window.innerWidth; // Или ширина контейнера таймлайна, если он не на весь экран
+    
+        // Вычисление позиции курсора относительно таймлайна
+        const offsetX = (mouseX - planeOffset.x) / scale;
+    
+        // Процентное соотношение позиции курсора внутри таймлайна
+        const cursorPositionRatio = offsetX / timelineWidth;
+    
+        // Вычисление времени, соответствующего позиции курсора
+        const cursorTime = new Date(startDate.getTime() + cursorPositionRatio * totalTimelineDuration);
+    
+        setCursorTime(cursorTime); // Обновляем состояние времени курсора
+    };
 
     const handleMouseMove = (e) => {
         if (draggingPlane) {
@@ -226,6 +240,7 @@ function TaskManager() {
         
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
+        updateCursorTime(e.clientX);
         
     };
 
@@ -394,6 +409,21 @@ function TaskManager() {
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} />}
+            <div
+                style={{
+                position: 'absolute',
+                left: `${15}px`, // Или другая позиция в зависимости от текущей логики
+                top: `${10}px`,
+                backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                color: '#fff',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                pointerEvents: 'none',
+                }}
+                >
+                    {cursorTime.toLocaleTimeString()}
+            </div>
+
         </div>
     );
 }
