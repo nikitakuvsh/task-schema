@@ -143,7 +143,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
             )}
 
             {showMenu && (
-                <ul className="block__menu" style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px` }}>
+                <ul className="block__menu" style={{ top: `${menuPosition.top}px`, left: `${menuPosition.left}px`}}>
                     <li className="block__menu-li" onClick={handleRename}>Переименовать</li>
                     <li className="block__menu-li" onClick={handleOpenColorPicker}>Изменить цвет</li>
                     <li className="block__menu-li" onClick={handleAddFiles}>Загрузить документ</li>

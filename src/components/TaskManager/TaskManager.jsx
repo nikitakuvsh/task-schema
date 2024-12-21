@@ -28,6 +28,7 @@ function TaskManager() {
     const [selectedBlocks, setSelectedBlocks] = useState([]);
     const [selectedBlockIndexes, setSelectedBlockIndexes] = useState([]);
     const [cursorTime, setCursorTime] = useState(new Date());
+    const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0});
 
     const handleLeaderLinesUpdate = (updateFn) => {
         leaderLinesUpdateRef.current = updateFn;
@@ -82,23 +83,15 @@ function TaskManager() {
         setPrevPlaneOffset(planeOffset.x);
     };
 
-    const updateCursorTime = (mouseX) => {
-        // Вычисление общего времени в миллисекундах между границами таймлайна
+    const updateCursorTime = (mouseX, mouseY) => {
         const totalTimelineDuration = endDate.getTime() - startDate.getTime();
-        
-        // Вычисление ширины видимого таймлайна (в пикселях)
-        const timelineWidth = window.innerWidth; // Или ширина контейнера таймлайна, если он не на весь экран
-    
-        // Вычисление позиции курсора относительно таймлайна
+        const timelineWidth = window.innerWidth;
         const offsetX = (mouseX - planeOffset.x) / scale;
-    
-        // Процентное соотношение позиции курсора внутри таймлайна
         const cursorPositionRatio = offsetX / timelineWidth;
-    
-        // Вычисление времени, соответствующего позиции курсора
         const cursorTime = new Date(startDate.getTime() + cursorPositionRatio * totalTimelineDuration);
-    
-        setCursorTime(cursorTime); // Обновляем состояние времени курсора
+
+        setCursorTime(cursorTime);
+        setCursorPosition({x: offsetX, y:mouseY});
     };
 
     const handleMouseMove = (e) => {
@@ -240,7 +233,7 @@ function TaskManager() {
         
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
-        updateCursorTime(e.clientX);
+        updateCursorTime(e.clientX, e.clientY);
         
     };
 
@@ -263,7 +256,7 @@ function TaskManager() {
     };
 
     const handleWheel = (e) => {
-        e.preventDefault();
+        // e.preventDefault();
         const MIN_SCALE = 0.2; // Минимальный масштаб
         const MAX_SCALE = 3;   // Максимальный масштаб
         const SCALE_STEP = 0.1; // Шаг изменения масштаба
@@ -409,18 +402,7 @@ function TaskManager() {
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} />}
-            <div
-                style={{
-                position: 'absolute',
-                left: `${15}px`, // Или другая позиция в зависимости от текущей логики
-                top: `${10}px`,
-                backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                color: '#fff',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                pointerEvents: 'none',
-                }}
-                >
+            <div className="time-under-cursor" style={{left: `${cursorPosition.x}px`, top: `${cursorPosition.y + 10}px`,}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
 
