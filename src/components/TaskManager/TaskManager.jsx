@@ -69,6 +69,24 @@ function TaskManager() {
 
     };
 
+    const updateTimeline = () => {
+        const offsetDifference = planeOffset.xTimeline - prevplaneOffset;
+        const timeOffset = offsetDifference * 10000 * scale;
+
+        const newStartDate = new Date(startDate.getTime() - timeOffset);
+        const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
+
+        setStartDate(newStartDate);
+        setEndDate(newEndDate);
+        setPrevPlaneOffset(planeOffset.x);
+    };
+
+    // const updateCursorTime = () => {
+    //     const offsetDifference = planeOffset.xTimeline - prevplaneOffset;
+    //     const timeOffset = offsetDifference * 10000 * scale;
+    //     const 
+    // };
+
     const handleMouseMove = (e) => {
         if (draggingPlane) {
             const deltaX = e.clientX - startPlaneDrag.x;
@@ -105,8 +123,6 @@ function TaskManager() {
         
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
-        
-
 
         if (draggingButton && currentBlock) {
             const mouseX = e.clientX;
@@ -265,8 +281,6 @@ function TaskManager() {
         }
     };
 
-
-
     const handleCreateConnectedBlock = (sourceIndex) => {
         if (sourceIndex < 0 || sourceIndex >= blocks.length) {
             console.error("Invalid source index:", sourceIndex);
@@ -340,20 +354,6 @@ function TaskManager() {
         forceUpdateLines();
     }, [scale, blocks, connections]);
     
-
-    const updateTimeline = () => {
-        const offsetDifference = planeOffset.xTimeline - prevplaneOffset;
-        const timeOffset = offsetDifference * 10000 * scale;
-
-        const newStartDate = new Date(startDate.getTime() - timeOffset);
-        const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
-
-        setStartDate(newStartDate);
-        setEndDate(newEndDate);
-        setPrevPlaneOffset(planeOffset.x);
-    };
-
-
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
             <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
