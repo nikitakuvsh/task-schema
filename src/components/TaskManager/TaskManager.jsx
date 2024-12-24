@@ -28,7 +28,7 @@ function TaskManager() {
     const [selectedBlocks, setSelectedBlocks] = useState([]);
     const [selectedBlockIndexes, setSelectedBlockIndexes] = useState([]);
     const [cursorTime, setCursorTime] = useState(new Date());
-    const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0});
+    const [cursorPosition, setCursorPosition] = useState({ x: -10, y: -10});
     const [deadlineBlock, setDeadlineBlock] = useState({BlockStartDate: 0, BlockEndDate: 0});
 
     const handleLeaderLinesUpdate = (updateFn) => {
@@ -428,7 +428,7 @@ function TaskManager() {
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} />}
-            <div className="time-under-cursor" style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`,}}>
+            <div className="time-under-cursor" style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
 

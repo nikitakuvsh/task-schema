@@ -3,6 +3,7 @@ import LeaderLine from "react-leader-line";
 
 function LeaderLines({ blocks, connections = [], planeOffset, onUpdateLines, scale }) {
     const leaderLinesRef = useRef([]);
+    const leaderlines = document.querySelectorAll('.leader-lines');
 
     const updateLines = () => {
         leaderLinesRef.current.forEach((line) => {
