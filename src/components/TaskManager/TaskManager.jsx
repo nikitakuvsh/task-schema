@@ -287,6 +287,8 @@ function TaskManager() {
 
             setSelection({ x: startX, y: startY, startX, startY, width: 0, height: 0 });
         }
+        setSelectedBlockIndexes([]);
+        setSelectedBlocks([]);
     };
 
     const handleCreateConnectedBlock = (sourceIndex) => {
