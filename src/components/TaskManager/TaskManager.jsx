@@ -29,6 +29,7 @@ function TaskManager() {
     const [selectedBlockIndexes, setSelectedBlockIndexes] = useState([]);
     const [cursorTime, setCursorTime] = useState(new Date());
     const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0});
+    const [deadlineBlock, setDeadlineBlock] = useState({BlockStartDate: 0, BlockEndDate: 0});
 
     const handleLeaderLinesUpdate = (updateFn) => {
         leaderLinesUpdateRef.current = updateFn;
@@ -92,6 +93,20 @@ function TaskManager() {
 
         setCursorTime(cursorTime);
         setCursorPosition({x: offsetX, y:mouseY});
+    };
+
+    const updateBlockTime = (block) => {
+        const totalTimelineDuration = endDate.getTime() - startDate.getTime(); // Общее время в миллисекундах
+        const timelineWidth = window.innerWidth; // Ширина таймлайна в пикселях
+    
+        // Вычисление времени для начала и конца блока
+        const blockStartOffset = (block.x * scale + planeOffset.x) / timelineWidth;
+        const blockEndOffset = ((block.x + block.width) * scale + planeOffset.x) / timelineWidth;
+    
+        const BlockStartDate = new Date(startDate.getTime() + blockStartOffset * totalTimelineDuration);
+        const BlockEndDate = new Date(startDate.getTime() + blockEndOffset * totalTimelineDuration);
+    
+        setDeadlineBlock({ BlockStartDate, BlockEndDate });
     };
 
     const handleMouseMove = (e) => {
@@ -234,7 +249,9 @@ function TaskManager() {
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
         updateCursorTime(e.clientX, e.clientY);
-        
+        if (draggingBlockIndex !== null && blocks[draggingBlockIndex]) {
+            updateBlockTime(blocks[draggingBlockIndex]);
+        }
     };
 
     const handleBlockMouseDown = (e, index) => {
@@ -258,7 +275,7 @@ function TaskManager() {
     const handleWheel = (e) => {
         // e.preventDefault();
         const MIN_SCALE = 0.2; // Минимальный масштаб
-        const MAX_SCALE = 3;   // Максимальный масштаб
+        const MAX_SCALE = 5;   // Максимальный масштаб
         const SCALE_STEP = 0.1; // Шаг изменения масштаба
         setScale((prevScale) => {
             let newScale = prevScale;
@@ -363,6 +380,12 @@ function TaskManager() {
     useEffect(() => {
         forceUpdateLines();
     }, [scale, blocks, connections]);
+
+    useEffect(() => {
+        if (blocks.length > 0) {
+            blocks.forEach((block) => updateBlockTime(block));
+        }
+    }, [blocks, startDate, endDate, scale, planeOffset]);
     
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
@@ -381,6 +404,7 @@ function TaskManager() {
                         onRenameBlock={handleRenameBlock}
                         forceUpdateLines={forceUpdateLines}
                         selectedBlocks={selectedBlocks}
+                        updateBlockTime={updateBlockTime}
                     />
                 ))}
                 {draggingButton && currentBlock && (
@@ -403,7 +427,7 @@ function TaskManager() {
                 <button className="task-manager__button button--load-schema">Загрузить схему</button>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
-            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} />}
+            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} />}
             <div className="time-under-cursor" style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`,}}>
                     {cursorTime.toLocaleTimeString()}
             </div>

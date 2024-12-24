@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import workerIcon from '../../img/icons/worker.svg';
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, updateBlockTime}) {
     const [nameTask, setNameTask] = useState("");
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
@@ -81,6 +81,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                 return newSize;
             });
         };
+        // updateBlockTime(e[direction]);
 
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);

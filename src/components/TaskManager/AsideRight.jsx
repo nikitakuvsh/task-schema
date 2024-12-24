@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function AsideRight({ onClose }) {
+function AsideRight({ onClose, deadline }) {
     const [openBlocks, setOpenBlocks] = useState({});
 
     const toggleBlock = (blockName) => {
@@ -21,7 +21,8 @@ function AsideRight({ onClose }) {
                         <span className={`aside__toggle-icon ${openBlocks.deadline ? "open" : ""}`}>▼</span>
                     </h2>
                     {openBlocks.deadline && (
-                        <p className="aside__block-props">10:05 00 20024</p>
+                        <p className="aside__block-props">{deadline.BlockStartDate.toLocaleTimeString()} - {deadline.BlockEndDate.toLocaleTimeString()}</p>
+                        
                     )}
                 </div>
                 <div className="aside__block">
