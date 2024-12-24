@@ -110,7 +110,7 @@ function TaskManager() {
             setPlaneOffset((prev) => ({
                 x: prev.x,
                 y: prev.y,
-                xTimeline: prev.x + deltaX,
+                xTimeline: (prev.x + deltaX) / scale,
             }));
 
             setStartPlaneDrag({ x: e.clientX, y: e.clientY });
@@ -402,7 +402,7 @@ function TaskManager() {
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} />}
-            <div className="time-under-cursor" style={{left: `${cursorPosition.x}px`, top: `${cursorPosition.y + 10}px`,}}>
+            <div className="time-under-cursor" style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`,}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
 
