@@ -100,8 +100,8 @@ function TaskManager() {
         const timelineWidth = window.innerWidth; // Ширина таймлайна в пикселях
     
         // Вычисление времени для начала и конца блока
-        const blockStartOffset = (block.x * scale + planeOffset.x) / timelineWidth;
-        const blockEndOffset = ((block.x + block.width) * scale + planeOffset.x) / timelineWidth;
+        const blockStartOffset = (block.x + planeOffset.x) / timelineWidth;
+        const blockEndOffset = ((block.x + block.width) + planeOffset.x) / timelineWidth;
     
         const BlockStartDate = new Date(startDate.getTime() + blockStartOffset * totalTimelineDuration);
         const BlockEndDate = new Date(startDate.getTime() + blockEndOffset * totalTimelineDuration);
@@ -375,7 +375,7 @@ function TaskManager() {
 
     useEffect(() => {
         updateTimeline();
-    }, [planeOffset, scale]);
+    }, [planeOffset]);
     
     useEffect(() => {
         forceUpdateLines();
@@ -385,7 +385,7 @@ function TaskManager() {
         if (blocks.length > 0) {
             blocks.forEach((block) => updateBlockTime(block));
         }
-    }, [blocks, startDate, endDate, scale, planeOffset]);
+    }, [blocks]);
     
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
