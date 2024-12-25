@@ -95,7 +95,7 @@ function TaskManager() {
         setCursorPosition({x: offsetX, y:mouseY});
     };
 
-    const updateBlockTime = (block) => {
+    const updateBlockTime = (block, index) => {
         const totalTimelineDuration = endDate.getTime() - startDate.getTime(); // Общее время в миллисекундах
         const timelineWidth = window.innerWidth; // Ширина таймлайна в пикселях
     
@@ -250,7 +250,7 @@ function TaskManager() {
         }
         updateCursorTime(e.clientX, e.clientY);
         if (draggingBlockIndex !== null && blocks[draggingBlockIndex]) {
-            updateBlockTime(blocks[draggingBlockIndex]);
+            updateBlockTime(blocks, draggingBlockIndex);
         }
     };
 
@@ -383,7 +383,7 @@ function TaskManager() {
 
     useEffect(() => {
         if (blocks.length > 0) {
-            blocks.forEach((block) => updateBlockTime(block));
+            blocks.forEach((block) => updateBlockTime(block, draggingBlockIndex));
         }
     }, [blocks]);
     
@@ -427,7 +427,7 @@ function TaskManager() {
                 <button className="task-manager__button button--load-schema">Загрузить схему</button>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
-            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} />}
+            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={draggingBlockIndex}/>}
             <div className="time-under-cursor" style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
