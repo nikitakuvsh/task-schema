@@ -1,0 +1,48 @@
+.settings-button {
+    z-index: 1000;
+    cursor: pointer;
+    position: absolute;
+    right: 20%;
+    top: 5%;
+}
+
+.settings-button:hover {
+    background: #005a9e;
+}
+
+.settings-menu__wrapper {
+    position: absolute;
+    bottom: 100%;
+    right: 20%;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100000;
+    padding: 20px;
+}
+
+.settings-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.settings-menu__title {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.settings-menu__label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+}
+
+.settings-menu__select {
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

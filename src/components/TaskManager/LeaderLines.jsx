@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from "react";
 import LeaderLine from "react-leader-line";
 
-function LeaderLines({ blocks, connections = [], planeOffset, onUpdateLines, scale }) {
+function LeaderLines({ blocks, connections = [], planeOffset, onUpdateLines, scale, isDarkTheme }) {
     const leaderLinesRef = useRef([]);
     const leaderlines = document.querySelectorAll('.leader-lines');
 
@@ -24,7 +24,7 @@ function LeaderLines({ blocks, connections = [], planeOffset, onUpdateLines, sca
                 if (startBlock && endBlock) {
                     try {
                         const line = new LeaderLine(startBlock, endBlock, {
-                            color: "#000",
+                            color: isDarkTheme ? "#ffffff" : "#000000",
                             size: 3 * scale,
                             dash: { animation: true },
                             startPlug: "disc",
@@ -57,7 +57,7 @@ function LeaderLines({ blocks, connections = [], planeOffset, onUpdateLines, sca
                 }
             });
         };
-    }, [connections, blocks, planeOffset]);
+    }, [connections, blocks, planeOffset, isDarkTheme]);
 
     // Экспорт метода для внешнего обновления
     useEffect(() => {

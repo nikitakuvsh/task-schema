@@ -4,6 +4,7 @@ import LeaderLines from "./LeaderLines";
 import Timeline from "./TimeLine";
 import AsideRight from "./AsideRight";
 import "./TaskManager.css";
+import Settings from './Settings/Settings';
 
 function TaskManager() {
     const [blocks, setBlocks] = useState([]);
@@ -30,6 +31,16 @@ function TaskManager() {
     const [cursorTime, setCursorTime] = useState(new Date());
     const [cursorPosition, setCursorPosition] = useState({ x: -10, y: -10});
     const [deadlineBlock, setDeadlineBlock] = useState({BlockStartDate: 0, BlockEndDate: 0});
+    const [isDarkTheme, setIsDarkTheme] = useState(false);
+    const [isTimelineUnderCursorHidden, setIsTimelineUnderCursorHidden] = useState(false);
+
+    const toggleTheme = () => {
+        setIsDarkTheme((prev) => !prev);
+    }
+
+    const toggleTimelineUnderCursor = () => {
+        setIsTimelineUnderCursorHidden((prev) => !prev);
+    }
 
     const handleLeaderLinesUpdate = (updateFn) => {
         leaderLinesUpdateRef.current = updateFn;
@@ -390,8 +401,8 @@ function TaskManager() {
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
             <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
-            <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} />
-            <div className="task-manager__plane" onMouseDown={handlePlaneMouseDown}>
+            <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} isDarkTheme={isDarkTheme} />
+            <div className={`task-manager__plane ${isDarkTheme ? 'dark' : 'light'}`} onMouseDown={handlePlaneMouseDown}>
                 {blocks.map((block, index) => (
                     <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
@@ -405,6 +416,7 @@ function TaskManager() {
                         forceUpdateLines={forceUpdateLines}
                         selectedBlocks={selectedBlocks}
                         updateBlockTime={updateBlockTime}
+                        isDarkTheme={isDarkTheme}
                     />
                 ))}
                 {draggingButton && currentBlock && (
@@ -420,18 +432,18 @@ function TaskManager() {
                 {selection && (
                     <div className="block--select" style={{left: `${selection.x}px`, top: `${selection.y}px`, width: `${selection.width}px`, height: `${selection.height}px`,}}/>
                 )}
-                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} scale={scale}/>
+                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} scale={scale} isDarkTheme={isDarkTheme}/>
             </div>
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">Скачать схему</button>
                 <button className="task-manager__button button--load-schema">Загрузить схему</button>
+                <Settings toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} toggleTimelineUnderCursor={toggleTimelineUnderCursor} isTimelineUnderCursorHidden={isTimelineUnderCursorHidden}/>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={draggingBlockIndex}/>}
-            <div className="time-under-cursor" style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
+            <div className={`time-under-cursor ${isTimelineUnderCursorHidden ? 'unvisible' : 'visible'}`} style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
-
         </div>
     );
 }

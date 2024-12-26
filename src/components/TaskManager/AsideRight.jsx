@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function AsideRight({ onClose, deadline }) {
+function AsideRight({ onClose, deadline, blockIndex }) {
     const [openBlocks, setOpenBlocks] = useState({});
 
     const toggleBlock = (blockName) => {

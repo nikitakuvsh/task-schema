@@ -21,8 +21,37 @@
     overflow: hidden;
 }
 
+.task-manager__plane.light {
+    background-color: #f4f4f4;
+}
+
+/* Тёмная тема */
+.task-manager__plane.dark {
+    background-color: #1e1e1e;
+    background-image: linear-gradient(to right, #444 0.1rem, transparent 0.1rem),
+                      linear-gradient(to bottom, #444 0.1rem, transparent 0.1rem);
+}
+
 .task-manager__plane:active {
     cursor: grabbing;
+}
+
+.dark {
+    color: #f4f4f4;
+}
+
+.block__title.dark,
+.block__set-name-task,
+.connection-menu-item {
+    color: #333;
+}
+
+.unvisible {
+    display: none;
+}
+
+.visible {
+    display: block;
 }
 
 .task-manager__button {
@@ -412,4 +441,12 @@
     background-color: rgba(0, 0, 0, 0.7);
     color: #fff;
     z-index: 50;
+}
+
+.settings-button {
+    z-index: 1000;
+    cursor: pointer;
+    position: absolute;
+    right: 20%;
+    top: 5%;
 }
