@@ -33,6 +33,7 @@ function TaskManager() {
     const [deadlineBlock, setDeadlineBlock] = useState({BlockStartDate: 0, BlockEndDate: 0});
     const [isDarkTheme, setIsDarkTheme] = useState(false);
     const [isTimelineUnderCursorHidden, setIsTimelineUnderCursorHidden] = useState(false);
+    const [isAnimatedLine, setIsAnimatedLine] = useState(true);
 
     const toggleTheme = () => {
         setIsDarkTheme((prev) => !prev);
@@ -40,6 +41,10 @@ function TaskManager() {
 
     const toggleTimelineUnderCursor = () => {
         setIsTimelineUnderCursorHidden((prev) => !prev);
+    }
+
+    const toggleTypeLeaderLine = () => {
+        setIsAnimatedLine((prev) => !prev);
     }
 
     const handleLeaderLinesUpdate = (updateFn) => {
@@ -432,12 +437,12 @@ function TaskManager() {
                 {selection && (
                     <div className="block--select" style={{left: `${selection.x}px`, top: `${selection.y}px`, width: `${selection.width}px`, height: `${selection.height}px`,}}/>
                 )}
-                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} scale={scale} isDarkTheme={isDarkTheme}/>
+                <LeaderLines blocks={blocks} connections={connections} planeOffset={planeOffset} onUpdateLines={handleLeaderLinesUpdate} scale={scale} isDarkTheme={isDarkTheme} isAnimatedLine={isAnimatedLine}/>
             </div>
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">Скачать схему</button>
                 <button className="task-manager__button button--load-schema">Загрузить схему</button>
-                <Settings toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} toggleTimelineUnderCursor={toggleTimelineUnderCursor} isTimelineUnderCursorHidden={isTimelineUnderCursorHidden}/>
+                <Settings toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} toggleTimelineUnderCursor={toggleTimelineUnderCursor} isTimelineUnderCursorHidden={isTimelineUnderCursorHidden} toggleTypeLeaderLine={toggleTypeLeaderLine} isAnimatedLine={isAnimatedLine}/>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={draggingBlockIndex}/>}

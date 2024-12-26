@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "./Settings.css";
 
-function Settings({ toggleTheme, isDarkTheme, toggleTimelineUnderCursor, isTimelineUnderCursorHidden }) {
+function Settings({ toggleTheme, isDarkTheme, toggleTimelineUnderCursor, isTimelineUnderCursorHidden, toggleTypeLeaderLine, isAnimatedLine }) {
     const [isSettingsMenuOpen, setIsSettingsMenuOpen] = useState(false);
 
     return (
@@ -28,6 +28,14 @@ function Settings({ toggleTheme, isDarkTheme, toggleTimelineUnderCursor, isTimel
                                 <select className="settings-menu__select" onChange={toggleTimelineUnderCursor} value={isTimelineUnderCursorHidden ? 'hidden' : 'visible'}>
                                     <option value='hidden'>Скрыть</option>
                                     <option value='visible'>Показать</option>
+                                </select>
+                            </label>
+
+                            <label className="settings-menu__label">
+                                <span>Стиль соединений</span>
+                                <select className="settings-menu__select" onChange={toggleTypeLeaderLine} value={isAnimatedLine ? 'animation' : 'static'}>
+                                    <option value='animation'>Анимированные</option>
+                                    <option value='static'>Статические</option>
                                 </select>
                             </label>
                         </div>
