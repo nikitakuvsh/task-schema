@@ -175,11 +175,34 @@
     border-left: 1px solid #e1e5ea; /* Лёгкая рамка слева */
 }
 
+.task-manager__aside-right.dark {
+    background-color: #555555;
+    border-left: 1px solid #242323c7;
+}
+
 .task-manager__aside-content {
     display: flex;
     flex-direction: column;
     gap: 1.5rem; /* Пробел между блоками */
 }
+
+.aside__block-button {
+    padding: 0.5rem;
+    background-color: #4c8b4f;
+}
+
+.aside__block-button.dark {
+    color: #1eca27e1;
+}
+
+.aside__block-button.lite {
+    color: #eaeaea;
+}
+
+.aside__block-button:hover {
+    background-color: rgb(77, 129, 80);
+}
+
 
 .aside__block {
     background-color: #ffffff; /* Белый фон для блоков */
@@ -189,6 +212,11 @@
     border: 1px solid #eaeaea; /* Лёгкая рамка */
 }
 
+.aside__block.dark {
+    background-color: #333333; /* Тёмный фон для блоков */
+    border: 1px solid #555555; /* Цвет рамки */
+}
+
 .aside__block-title {
     font-size: 1.6rem;
     font-weight: bold;
@@ -196,6 +224,10 @@
     text-align: left; /* Выравнивание по левому краю */
     color: #2a2a2a; /* Тёмный цвет для заголовков */
     position: relative;
+}
+
+.aside__block-title.dark {
+    color: #eaeaea;
 }
 
 .aside__block-title::before,
@@ -223,6 +255,11 @@
     color: #555; /* Нейтральный серый цвет текста */
     text-align: left; /* Текст выровнен по левому краю */
     word-wrap: break-word; /* Перенос длинных строк */
+}
+
+.aside__block-props.dark,
+.aside__block-file-title.dark {
+    color: #f0f0f0;
 }
 
 .aside__close-btn {
