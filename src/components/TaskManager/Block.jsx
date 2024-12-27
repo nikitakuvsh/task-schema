@@ -75,7 +75,15 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                     height: direction.includes("bottom") ? startHeight + deltaY : prev.height,
                 };
     
-                forceUpdateLines(); // Обновляем линии
+                // Обновляем время блока при каждом изменении размера
+                const updatedBlock = {
+                    ...block,
+                    width: newSize.width,
+                    height: newSize.height,
+                };
+                updateTimeBlock(updatedBlock, index); // Передаем обновленные размеры
+    
+                forceUpdateLines(); // Обновление линий
     
                 return newSize;
             });
@@ -84,20 +92,12 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
-    
-            // Вызываем updateTimeBlock с обновленным блоком
-            updateTimeBlock(
-                {
-                    ...block,
-                    width: blockSize.width, // Используем новое значение ширины
-                },
-                index
-            );
         };
     
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
     };
+    
     
 
     const handleCreateConnectedBlockClick = () => {

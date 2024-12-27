@@ -120,24 +120,23 @@ function TaskManager() {
     };
 
     const updateBlockTime = (block, index) => {
-        const totalTimelineDuration = endDate.getTime() - startDate.getTime(); // Общее время в миллисекундах
-        const timelineWidth = window.innerWidth; // Ширина таймлайна в пикселях
+        const totalTimelineDuration = endDate.getTime() - startDate.getTime(); // Общий временной интервал
+        const timelineWidth = window.innerWidth * scale; // Учитываем масштаб
     
-        // Вычисление времени для начала и конца блока
+        // Левая граница
         const blockStartOffset = (block.x + planeOffset.x) / timelineWidth;
-        const blockEndOffset = ((block.x + block.width) + planeOffset.x) / timelineWidth;
-    
         const BlockStartDate = new Date(startDate.getTime() + blockStartOffset * totalTimelineDuration);
-        const BlockEndDate = new Date(startDate.getTime() + blockEndOffset * totalTimelineDuration);
     
-        // Отправляем в AsideRight информацию о дедлайне для этого блока
+        // Правая граница
+        const blockEndOffset = (block.x + block.width + planeOffset.x) / timelineWidth;
+        const BlockEndDate = new Date(startDate.getTime() + blockEndOffset * totalTimelineDuration);
+        
+        // Установка значений
         setDeadlineBlock({ BlockStartDate, BlockEndDate });
-        // Если необходимо, передаем также blockIndex
         setBlockIndex(index);
         setNameTask(block.name);
     };
     
-
     const handleMouseMove = (e) => {
         if (draggingPlane) {
             const deltaX = e.clientX - startPlaneDrag.x;
@@ -172,10 +171,10 @@ function TaskManager() {
                 )
             );
         
-            setStartDrag({ x: e.clientX, y: e.clientY });
         
             // Обновляем время для перемещаемого блока
-            updateBlockTime(blocks[draggingBlockIndex], draggingBlockIndex); // Используем индекс для текущего блока
+            // updateBlockTime(blocks[draggingBlockIndex], draggingBlockIndex);
+            setStartDrag({ x: e.clientX, y: e.clientY });
         }
 
         if (draggingButton && currentBlock) {
