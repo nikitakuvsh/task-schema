@@ -2,8 +2,7 @@ import React, { useState, useRef } from "react";
 import workerIcon from '../../img/icons/worker.svg';
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, updateBlockTime, isDarkTheme}) {
-    const [nameTask, setNameTask] = useState("");
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, isDarkTheme, nameTask, handleSetNameTask }) {
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const [isRenaming, setIsRenaming] = useState(false);
@@ -137,7 +136,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         >
             {isRenaming ? (
                 <form onSubmit={handleSaveName}>
-                    <input className={`block__set-name-task ${isDarkTheme ? 'dark' : 'light'}`} autoFocus type="text" value={nameTask} onChange={(e) => setNameTask(e.target.value)} onBlur={() => setIsRenaming(false)} />
+                    <input className={`block__set-name-task ${isDarkTheme ? 'dark' : 'light'}`} autoFocus type="text" value={nameTask} onChange={handleSetNameTask} onBlur={() => setIsRenaming(false)} />
                 </form>
             ) : (
                 <h3 className={`block__title ${isDarkTheme ? 'dark' : 'light'}`}>{nameTask || `Блок ${index + 1}`}</h3>

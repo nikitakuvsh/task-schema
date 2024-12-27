@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function AsideRight({ onClose, deadline, blockIndex, isDarkTheme }) {
+function AsideRight({ onClose, deadline, blockIndex, isDarkTheme, nameTask }) {
     const [openBlocks, setOpenBlocks] = useState({});
     const [currentDeadline, setCurrentDeadline] = useState(deadline);
 
@@ -29,7 +29,7 @@ function AsideRight({ onClose, deadline, blockIndex, isDarkTheme }) {
         }));
     };
 
-    const truncateText = (text, maxLength = 10) => {
+    const truncateText = (text, maxLength = 15) => {
         if (text.length > maxLength) {
             return text.slice(0, maxLength) + '...';
         }
@@ -41,7 +41,7 @@ function AsideRight({ onClose, deadline, blockIndex, isDarkTheme }) {
             <button className="aside__close-btn" onClick={onClose}>✖</button>
             <div className="task-manager__aside-content">
                 <h2 className={`aside__block-title ${isDarkTheme ? 'dark' : 'lite'} name--block`}>
-                    {truncateText('Название блока офыволфр олрфолыр волрфыол рволфыр олврф ыролврфыл фырволрфыолврол фроыврол фрыолв олфырвло рфыолвр фолыр волфры олврфол ырвол фыолрвлфоыр')}
+                    {truncateText(`${nameTask ? nameTask : `Блок ${blockIndex + 1}`}`)}
                 </h2>
 
                 {/* Блок с Дедлайном */}

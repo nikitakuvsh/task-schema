@@ -35,6 +35,16 @@ function TaskManager() {
     const [isTimelineUnderCursorHidden, setIsTimelineUnderCursorHidden] = useState(false);
     const [isAnimatedLine, setIsAnimatedLine] = useState(true);
     const [blockIndex, setBlockIndex] = useState(null);
+    const [nameTask, setNameTask] = useState("");
+
+    const handleSetNameTask = (e, index) => {
+        const newName = e.target.value;
+        setBlocks((prevBlocks) =>
+            prevBlocks.map((block, i) =>
+                i === index ? { ...block, name: newName } : block
+            )
+        );
+    };
 
     const toggleTheme = () => {
         setIsDarkTheme((prev) => !prev);
@@ -85,6 +95,7 @@ function TaskManager() {
             y: adjustedY,
             width: 200 * scale,
             height: 200 * scale,
+            name: '',
         });
 
     };
@@ -415,7 +426,7 @@ function TaskManager() {
                     <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
-                        onDoubleClick={() => {setAsideVisible(true); updateBlockTime(block, index)}}
+                        onDoubleClick={() => {setAsideVisible(true); updateBlockTime(block, index); setNameTask(block.name)}}
                         onConnectBlocks={handleConnectBlocks}
                         onCreateChoiceConnectedBlock={handleStartConnection}
                         onSelectTarget={handleSelectTarget}
@@ -425,6 +436,8 @@ function TaskManager() {
                         selectedBlocks={selectedBlocks}
                         updateBlockTime={updateBlockTime}
                         isDarkTheme={isDarkTheme}
+                        nameTask={block.name}
+                        handleSetNameTask={(e) => handleSetNameTask(e, index)}
                     />
                 ))}
                 {draggingButton && currentBlock && (
@@ -448,7 +461,7 @@ function TaskManager() {
                 <Settings toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} toggleTimelineUnderCursor={toggleTimelineUnderCursor} isTimelineUnderCursorHidden={isTimelineUnderCursorHidden} toggleTypeLeaderLine={toggleTypeLeaderLine} isAnimatedLine={isAnimatedLine}/>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
-            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={blockIndex} isDarkTheme={isDarkTheme}/>}
+            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={blockIndex} isDarkTheme={isDarkTheme} nameTask={nameTask}/>}
             <div className={`time-under-cursor ${isTimelineUnderCursorHidden ? 'unvisible' : 'visible'}`} style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
