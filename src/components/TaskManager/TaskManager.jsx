@@ -34,6 +34,9 @@ function TaskManager() {
     const [isDarkTheme, setIsDarkTheme] = useState(false);
     const [isTimelineUnderCursorHidden, setIsTimelineUnderCursorHidden] = useState(false);
     const [isAnimatedLine, setIsAnimatedLine] = useState(true);
+    const [activeBlockIndex, setActiveBlockIndex] = useState(null);
+    const [activeBlockDeadline, setActiveBlockDeadline] = useState(null);
+
 
     const toggleTheme = () => {
         setIsDarkTheme((prev) => !prev);
@@ -122,8 +125,16 @@ function TaskManager() {
         const BlockStartDate = new Date(startDate.getTime() + blockStartOffset * totalTimelineDuration);
         const BlockEndDate = new Date(startDate.getTime() + blockEndOffset * totalTimelineDuration);
     
-        setDeadlineBlock({ BlockStartDate, BlockEndDate });
+        // Обновляем дедлайн только для перемещаемого блока
+        setBlocks((prevBlocks) =>
+            prevBlocks.map((b, i) =>
+                i === index
+                    ? { ...b, BlockStartDate, BlockEndDate } // Обновляем даты только у текущего блока
+                    : b // Остальные блоки остаются без изменений
+            )
+        );
     };
+    
 
     const handleMouseMove = (e) => {
         if (draggingPlane) {
@@ -385,6 +396,19 @@ function TaskManager() {
         }
     };
 
+    const handleDoubleClickBlock = (block, index) => {
+
+        const startDate = new Date(block.BlockStartDate);
+        const endDate = new Date(block.BlockEndDate);
+
+        setActiveBlockIndex(index);
+        setActiveBlockDeadline({ 
+            BlockStartDate: block.BlockStartDate, 
+            BlockEndDate: block.BlockEndDate 
+        });
+        setAsideVisible(true);
+    };
+
     useEffect(() => {
         handleRemoveInvalidConnections();
     }, [blocks]);
@@ -412,7 +436,7 @@ function TaskManager() {
                     <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
-                        onDoubleClick={() => setAsideVisible(true)}
+                        onDoubleClick={() => handleDoubleClickBlock(block, index)}
                         onConnectBlocks={handleConnectBlocks}
                         onCreateChoiceConnectedBlock={handleStartConnection}
                         onSelectTarget={handleSelectTarget}
@@ -445,7 +469,7 @@ function TaskManager() {
                 <Settings toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} toggleTimelineUnderCursor={toggleTimelineUnderCursor} isTimelineUnderCursorHidden={isTimelineUnderCursorHidden} toggleTypeLeaderLine={toggleTypeLeaderLine} isAnimatedLine={isAnimatedLine}/>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
-            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={draggingBlockIndex} isDarkTheme={isDarkTheme}/>}
+            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={activeBlockDeadline} blockIndex={activeBlockIndex} isDarkTheme={isDarkTheme}/>}
             <div className={`time-under-cursor ${isTimelineUnderCursorHidden ? 'unvisible' : 'visible'}`} style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
