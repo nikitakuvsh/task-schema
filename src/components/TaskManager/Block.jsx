@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import workerIcon from '../../img/icons/worker.svg';
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, isDarkTheme, nameTask, handleSetNameTask, updateTimeBlock }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, isDarkTheme, nameTask, handleSetNameTask, updateTimeBlock, onResize }) {
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const [isRenaming, setIsRenaming] = useState(false);
@@ -57,43 +57,39 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         setColor(e.target.value);
     };
 
+    const [currentSize, setCurrentSize] = useState({
+        width: block.width,
+        height: block.height,
+    });
+
     const handleResize = (e, direction) => {
         e.preventDefault();
         e.stopPropagation();
         const startX = e.clientX;
         const startY = e.clientY;
-        const startWidth = blockSize.width;
-        const startHeight = blockSize.height;
-    
+        const startWidth = currentSize.width;
+        const startHeight = currentSize.height;
+
         const onMouseMove = (moveEvent) => {
             const deltaX = moveEvent.clientX - startX;
             const deltaY = moveEvent.clientY - startY;
-    
-            setBlockSize((prev) => {
-                const newSize = {
-                    width: direction.includes("right") ? startWidth + deltaX : prev.width,
-                    height: direction.includes("bottom") ? startHeight + deltaY : prev.height,
-                };
-    
-                // Обновляем время блока при каждом изменении размера
-                const updatedBlock = {
-                    ...block,
-                    width: newSize.width,
-                    height: newSize.height,
-                };
-                updateTimeBlock(updatedBlock, index); // Передаем обновленные размеры
-    
-                forceUpdateLines(); // Обновление линий
-    
-                return newSize;
-            });
+
+            const newSize = {
+                width: direction.includes("right") ? startWidth + deltaX : startWidth,
+                height: direction.includes("bottom") ? startHeight + deltaY : startHeight,
+            };
+
+            setCurrentSize(newSize); // Обновляем локальное состояние
+
+            // Уведомляем родительский компонент о новом размере
+            onResize(newSize);
         };
-    
+
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
         };
-    
+
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
     };
@@ -142,8 +138,8 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
             style={{
                 left: `${block.x * scale}px`,
                 top: `${block.y * scale}px`,
-                width: `${blockSize.width * scale}px`,
-                height: `${blockSize.height * scale}px`,
+                width: `${currentSize.width * scale}px`,
+                height: `${currentSize.height * scale}px`,
                 backgroundColor: isSelected ? 'rgb(3, 184, 255)' : color,
             }}
             onMouseDown={(e) => e.button === 0 && onMouseDown(e, index)}

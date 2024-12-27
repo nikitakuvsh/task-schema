@@ -285,6 +285,21 @@ function TaskManager() {
         }
     };
 
+    const handleBlockResize = (index, newSize) => {
+        setBlocks((prevBlocks) => {
+            const updatedBlocks = [...prevBlocks];
+            updatedBlocks[index] = { ...updatedBlocks[index], ...newSize };
+            return updatedBlocks;
+        });
+    
+        // Обновляем время блока после изменения размеров
+        const updatedBlock = { ...blocks[index], ...newSize };
+        updateBlockTime(updatedBlock, index);
+    };
+    
+    
+    
+
     const handleBlockMouseDown = (e, index) => {
         e.stopPropagation();
         setDraggingBlockIndex(index);
@@ -435,6 +450,7 @@ function TaskManager() {
                         nameTask={block.name}
                         handleSetNameTask={(e) => handleSetNameTask(e, index)}
                         updateTimeBlock={updateBlockTime}
+                        onResize={(newSize) => handleBlockResize(index, newSize)}
                         // deadline={{BlockStartDate: block.startDate, BlockEndDate: block.endDate}}
                     />
                 ))}
