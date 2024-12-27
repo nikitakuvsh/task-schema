@@ -435,6 +435,8 @@ function TaskManager() {
                         isDarkTheme={isDarkTheme}
                         nameTask={block.name}
                         handleSetNameTask={(e) => handleSetNameTask(e, index)}
+                        updateTimeBlock={updateBlockTime}
+                        // deadline={{BlockStartDate: block.startDate, BlockEndDate: block.endDate}}
                     />
                 ))}
                 {draggingButton && currentBlock && (

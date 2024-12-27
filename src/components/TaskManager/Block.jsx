@@ -1,8 +1,8 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import workerIcon from '../../img/icons/worker.svg';
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, isDarkTheme, nameTask, handleSetNameTask }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, isDarkTheme, nameTask, handleSetNameTask, updateTimeBlock }) {
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const [isRenaming, setIsRenaming] = useState(false);
@@ -64,32 +64,41 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         const startY = e.clientY;
         const startWidth = blockSize.width;
         const startHeight = blockSize.height;
-
+    
         const onMouseMove = (moveEvent) => {
             const deltaX = moveEvent.clientX - startX;
             const deltaY = moveEvent.clientY - startY;
-
+    
             setBlockSize((prev) => {
                 const newSize = {
                     width: direction.includes("right") ? startWidth + deltaX : prev.width,
                     height: direction.includes("bottom") ? startHeight + deltaY : prev.height,
                 };
-
-                forceUpdateLines();
-
+    
+                forceUpdateLines(); // Обновляем линии
+    
                 return newSize;
             });
         };
-        // updateBlockTime(e[direction]);
-
+    
         const onMouseUp = () => {
             document.removeEventListener("mousemove", onMouseMove);
             document.removeEventListener("mouseup", onMouseUp);
+    
+            // Вызываем updateTimeBlock с обновленным блоком
+            updateTimeBlock(
+                {
+                    ...block,
+                    width: blockSize.width, // Используем новое значение ширины
+                },
+                index
+            );
         };
-
+    
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
     };
+    
 
     const handleCreateConnectedBlockClick = () => {
         setShowMenu(false);
@@ -120,6 +129,13 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
             console.log("File selected:", file);
         }
     };
+
+    // useEffect(() => {
+    //     if (deadline?.BlockStartDate && deadline?.BlockEndDate) {
+    //         handleResize();
+    //     }
+    // }, [deadline?.BlockStartDate, deadline?.BlockEndDate]);
+    
 
     return (
         <div id={`block-${index}`} ref={blockRef} className={`task-manager__block ${isSelected ? 'selected' : ''}`}
