@@ -487,3 +487,13 @@
     right: 20%;
     top: 5%;
 }
+
+.name--block {
+    display: flex;
+    justify-content: center;
+    font-size: 1.8rem !important;
+    overflow: hidden; /* Скрыть текст, который выходит за пределы */
+    text-overflow: ellipsis; /* Добавить троеточие */
+    white-space: nowrap; /* Запрещаем перенос строк */
+    max-width: 100%; /* Ограничиваем ширину контейнера */
+}

@@ -11,10 +11,19 @@ function AsideRight({ onClose, deadline, blockIndex, isDarkTheme }) {
         }));
     };
 
+    const truncateText = (text, maxLength = 10) => {
+        if (text.length > maxLength) {
+            return text.slice(0, maxLength) + '...';
+        }
+        return text;
+    };
+    
+
     return (
         <div className={`task-manager__aside-right ${isDarkTheme ? 'dark' : 'lite'}`}>
             <button className="aside__close-btn" onClick={onClose}>✖</button>
             <div className="task-manager__aside-content">
+                <h2 className={`aside__block-title ${isDarkTheme ? 'dark' : 'lite'} name--block`}>{truncateText('Название блока офыволфр олрфолыр волрфыол рволфыр олврф ыролврфыл фырволрфыолврол фроыврол фрыолв олфырвло рфыолвр фолыр волфры олврфол ырвол фыолрвлфоыр')}</h2>
                 <div className={`aside__block ${isDarkTheme ? 'dark' : 'lite'}`}>
                     <h2 className={`aside__block-title ${isDarkTheme ? 'dark' : 'lite'}`} onClick={() => toggleBlock("deadline")}>
                         Дедлайн
