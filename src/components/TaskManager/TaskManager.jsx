@@ -134,6 +134,7 @@ function TaskManager() {
         setDeadlineBlock({ BlockStartDate, BlockEndDate });
         // Если необходимо, передаем также blockIndex
         setBlockIndex(index);
+        setNameTask(block.name);
     };
     
 
@@ -423,7 +424,6 @@ function TaskManager() {
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
                         onDoubleClick={() => {setAsideVisible(true); updateBlockTime(block, index)}}
-                        onClick={() => setNameTask(block.name)}
                         onConnectBlocks={handleConnectBlocks}
                         onCreateChoiceConnectedBlock={handleStartConnection}
                         onSelectTarget={handleSelectTarget}
