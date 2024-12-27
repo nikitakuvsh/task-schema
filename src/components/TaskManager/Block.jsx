@@ -149,6 +149,7 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
                     <li className="block__menu-li" onClick={handleAddFiles}>Загрузить документ</li>
                     <li className="block__menu-li" onClick={handleCreateConnectedBlockClick}>Создать новый блок со связью</li>
                     <li className="block__menu-li" onClick={handleConnectToExistingBlockClick}>Связать с существующим блоком</li>
+                    <li className="block__menu-li">Свернуть цепочку</li>
                     <li className="block__menu-li">Удалить</li>
                 </ul>
             )}

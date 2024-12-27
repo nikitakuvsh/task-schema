@@ -366,6 +366,7 @@ function TaskManager() {
                 i === index ? { ...block, name: newName } : block
             )
         );
+        setNameTask(newName);
     };
 
     const handleConnectBlocks = (sourceIndex, targetIndex) => {
@@ -412,7 +413,6 @@ function TaskManager() {
     useEffect(() => {
         forceUpdateLines();
     }, [scale, blocks, connections]);
-
     
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
