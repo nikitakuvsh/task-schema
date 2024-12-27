@@ -34,6 +34,7 @@ function TaskManager() {
     const [isDarkTheme, setIsDarkTheme] = useState(false);
     const [isTimelineUnderCursorHidden, setIsTimelineUnderCursorHidden] = useState(false);
     const [isAnimatedLine, setIsAnimatedLine] = useState(true);
+    const [blockIndex, setBlockIndex] = useState(null);
 
     const toggleTheme = () => {
         setIsDarkTheme((prev) => !prev);
@@ -105,7 +106,7 @@ function TaskManager() {
         const timelineWidth = window.innerWidth;
         const offsetX = (mouseX - planeOffset.x) / scale;
         const cursorPositionRatio = offsetX / timelineWidth;
-        const cursorTime = new Date(startDate.getTime() + cursorPositionRatio * totalTimelineDuration);
+        const cursorTime = new Date(startDate.getTime() + cursorPositionRatio * totalTimelineDuration / scale);
 
         setCursorTime(cursorTime);
         setCursorPosition({x: offsetX, y:mouseY});
@@ -122,8 +123,12 @@ function TaskManager() {
         const BlockStartDate = new Date(startDate.getTime() + blockStartOffset * totalTimelineDuration);
         const BlockEndDate = new Date(startDate.getTime() + blockEndOffset * totalTimelineDuration);
     
+        // Отправляем в AsideRight информацию о дедлайне для этого блока
         setDeadlineBlock({ BlockStartDate, BlockEndDate });
+        // Если необходимо, передаем также blockIndex
+        setBlockIndex(index);
     };
+    
 
     const handleMouseMove = (e) => {
         if (draggingPlane) {
@@ -153,13 +158,16 @@ function TaskManager() {
         
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block, index) =>
-                    selectedBlockIndexes.includes(index) || index === draggingBlockIndex
+                    selectedBlocks.includes(block) || index === draggingBlockIndex // Добавляем условие для перемещаемого блока
                         ? { ...block, x: block.x + deltaX, y: block.y + deltaY }
                         : block
                 )
             );
         
             setStartDrag({ x: e.clientX, y: e.clientY });
+        
+            // Обновляем время для перемещаемого блока
+            updateBlockTime(blocks[draggingBlockIndex], draggingBlockIndex); // Используем индекс для текущего блока
         }
 
         if (draggingButton && currentBlock) {
@@ -265,8 +273,8 @@ function TaskManager() {
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
         updateCursorTime(e.clientX, e.clientY);
-        if (draggingBlockIndex !== null && blocks[draggingBlockIndex]) {
-            updateBlockTime(blocks, draggingBlockIndex);
+        if (draggingBlockIndex !== null && blocks[blockIndex]) {
+            updateBlockTime(blocks[draggingBlockIndex], draggingBlockIndex);
         }
     };
 
@@ -397,11 +405,6 @@ function TaskManager() {
         forceUpdateLines();
     }, [scale, blocks, connections]);
 
-    useEffect(() => {
-        if (blocks.length > 0) {
-            blocks.forEach((block) => updateBlockTime(block, draggingBlockIndex));
-        }
-    }, [blocks]);
     
     return (
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
@@ -412,7 +415,7 @@ function TaskManager() {
                     <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
-                        onDoubleClick={() => setAsideVisible(true)}
+                        onDoubleClick={() => {setAsideVisible(true); updateBlockTime(block, index)}}
                         onConnectBlocks={handleConnectBlocks}
                         onCreateChoiceConnectedBlock={handleStartConnection}
                         onSelectTarget={handleSelectTarget}
@@ -445,7 +448,7 @@ function TaskManager() {
                 <Settings toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} toggleTimelineUnderCursor={toggleTimelineUnderCursor} isTimelineUnderCursorHidden={isTimelineUnderCursorHidden} toggleTypeLeaderLine={toggleTypeLeaderLine} isAnimatedLine={isAnimatedLine}/>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
-            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={draggingBlockIndex} isDarkTheme={isDarkTheme}/>}
+            {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={blockIndex} isDarkTheme={isDarkTheme}/>}
             <div className={`time-under-cursor ${isTimelineUnderCursorHidden ? 'unvisible' : 'visible'}`} style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
