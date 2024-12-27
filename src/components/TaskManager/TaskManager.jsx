@@ -78,8 +78,6 @@ function TaskManager() {
         const offsetX = planeOffset.x || 0;
         const offsetY = planeOffset.y || 0;
 
-        console.log(offsetX, offsetY);
-
         if (scale === 0) {
             console.error("Scale is zero, cannot divide by zero.");
             return;
@@ -87,8 +85,6 @@ function TaskManager() {
 
         const adjustedX = (mouseX - offsetX) / scale;
         const adjustedY = (mouseY - offsetY) / scale;
-
-        console.log(adjustedX, adjustedY);
 
         setCurrentBlock({
             x: adjustedX,
@@ -426,7 +422,8 @@ function TaskManager() {
                     <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
                         onCreateConnectedBlock={handleCreateConnectedBlock}
-                        onDoubleClick={() => {setAsideVisible(true); updateBlockTime(block, index); setNameTask(block.name)}}
+                        onDoubleClick={() => {setAsideVisible(true); updateBlockTime(block, index)}}
+                        onClick={() => setNameTask(block.name)}
                         onConnectBlocks={handleConnectBlocks}
                         onCreateChoiceConnectedBlock={handleStartConnection}
                         onSelectTarget={handleSelectTarget}
