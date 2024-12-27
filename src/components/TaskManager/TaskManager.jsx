@@ -113,7 +113,7 @@ function TaskManager() {
         const timelineWidth = window.innerWidth;
         const offsetX = (mouseX - planeOffset.x) / scale;
         const cursorPositionRatio = offsetX / timelineWidth;
-        const cursorTime = new Date(startDate.getTime() + cursorPositionRatio * totalTimelineDuration / scale);
+        const cursorTime = new Date(startDate.getTime() + cursorPositionRatio * totalTimelineDuration);
 
         setCursorTime(cursorTime);
         setCursorPosition({x: offsetX, y:mouseY});
@@ -121,7 +121,7 @@ function TaskManager() {
 
     const updateBlockTime = (block, index) => {
         const totalTimelineDuration = endDate.getTime() - startDate.getTime(); // Общий временной интервал
-        const timelineWidth = window.innerWidth * scale; // Учитываем масштаб
+        const timelineWidth = window.innerWidth; // Учитываем масштаб
     
         // Левая граница
         const blockStartOffset = (block.x + planeOffset.x) / timelineWidth;
@@ -165,16 +165,14 @@ function TaskManager() {
         
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block, index) =>
-                    selectedBlocks.includes(block) || index === draggingBlockIndex // Добавляем условие для перемещаемого блока
+                    selectedBlockIndexes.includes(index) || index === draggingBlockIndex
                         ? { ...block, x: block.x + deltaX, y: block.y + deltaY }
                         : block
                 )
             );
         
-        
-            // Обновляем время для перемещаемого блока
-            // updateBlockTime(blocks[draggingBlockIndex], draggingBlockIndex);
             setStartDrag({ x: e.clientX, y: e.clientY });
+            updateBlockTime(blocks[draggingBlockIndex], draggingBlockIndex);
         }
 
         if (draggingButton && currentBlock) {
@@ -280,7 +278,7 @@ function TaskManager() {
             setStartDrag({ x: e.clientX, y: e.clientY });
         }
         updateCursorTime(e.clientX, e.clientY);
-        if (draggingBlockIndex !== null && blocks[blockIndex]) {
+        if (draggingBlockIndex !== null && blocks[draggingBlockIndex]) {
             updateBlockTime(blocks[draggingBlockIndex], draggingBlockIndex);
         }
     };
