@@ -109,7 +109,7 @@ function TaskManager() {
     };
     
     const updateCursorTime = (mouseX, mouseY) => {
-        const totalTimelineDuration = endDate - startDate;
+        const totalTimelineDuration = endDate.getTime() - startDate.getTime();
         const timelineWidth = window.innerWidth; // Ширина таймлайна
         const offsetX = (mouseX - planeOffset.x) / scale; // Смещение курсора с учетом масштаба
         const cursorPositionRatio = (offsetX + planeOffset.x * 2) / timelineWidth;
@@ -179,14 +179,14 @@ function TaskManager() {
         }
 
         if (draggingButton && currentBlock) {
-            const mouseX = e.clientX;
-            const mouseY = e.clientY;
+            const mouseX = e.clientX + planeOffset.x;
+            const mouseY = e.clientY + planeOffset.y;
 
             const offsetX = planeOffset?.x || 0;
             const offsetY = planeOffset?.y || 0;
 
-            const adjustedX = (mouseX - offsetX) / scale;
-            const adjustedY = (mouseY - offsetY) / scale;
+            const adjustedX = (mouseX - offsetX + planeOffset.x) / scale;
+            const adjustedY = (mouseY - offsetY + planeOffset.y) / scale;
 
             setCurrentBlock((prev) => ({
                 ...prev,
@@ -459,8 +459,8 @@ function TaskManager() {
                 {draggingButton && currentBlock && (
                     <div className="task-manager__block task-manager__block--temp"
                         style={{
-                            left: `${currentBlock.x}px`,
-                            top: `${currentBlock.y}px`,
+                            left: `${currentBlock.x - planeOffset.x}px`,
+                            top: `${currentBlock.y - planeOffset.y}px`,
                             width: `${currentBlock.width}px`,
                             height: `${currentBlock.height}px`,
                         }}
