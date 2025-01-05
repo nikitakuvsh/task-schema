@@ -31,7 +31,7 @@ function TaskManager() {
     const [cursorTime, setCursorTime] = useState(new Date());
     const [cursorPosition, setCursorPosition] = useState({ x: -10, y: -10});
     const [deadlineBlock, setDeadlineBlock] = useState({BlockStartDate: 0, BlockEndDate: 0});
-    const [isDarkTheme, setIsDarkTheme] = useState(false);
+    const [isDarkTheme, setIsDarkTheme] = useState(true);
     const [isTimelineUnderCursorHidden, setIsTimelineUnderCursorHidden] = useState(false);
     const [isAnimatedLine, setIsAnimatedLine] = useState(true);
     const [blockIndex, setBlockIndex] = useState(null);
@@ -433,7 +433,7 @@ function TaskManager() {
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
             <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
             <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} isDarkTheme={isDarkTheme} />
-            <div className={`task-manager__plane ${isDarkTheme ? 'dark' : 'light'}`} onMouseDown={handlePlaneMouseDown}>
+            <div className={`task-manager__plane ${isDarkTheme ? 'dark' : 'light'}`} onMouseDown={handlePlaneMouseDown} style={{backgroundPositionX: `${-planeOffset.x}px`, backgroundPositionY: `${-planeOffset.y}px`,}}>  
                 {blocks.map((block, index) => (
                     <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
