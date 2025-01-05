@@ -117,7 +117,7 @@ function TaskManager() {
         const cursorTime = new Date(cursorPositionRatio * totalTimelineDuration);
         
         setCursorTime(cursorTime);
-        setCursorPosition({ x: offsetX, y: mouseY});
+        setCursorPosition({ x: mouseX / scale, y: mouseY / scale});
     };
     
     const updateBlockTime = (block, index) => {
@@ -125,11 +125,11 @@ function TaskManager() {
         const timelineWidth = window.innerWidth; // Ширина таймлайна
     
         // Левая граница блока
-        const blockStartOffset = (block.x) / scale / timelineWidth;
+        const blockStartOffset = (block.x) / timelineWidth;
         const BlockStartDate = new Date(blockStartOffset * totalTimelineDuration);
     
         // Правая граница блока
-        const blockEndOffset = (block.x + block.width) / scale / timelineWidth;
+        const blockEndOffset = (block.x + block.width) / timelineWidth;
         const BlockEndDate = new Date(blockEndOffset * totalTimelineDuration);
     
         setDeadlineBlock({ BlockStartDate, BlockEndDate });
