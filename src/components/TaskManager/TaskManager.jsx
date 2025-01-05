@@ -112,7 +112,7 @@ function TaskManager() {
         const totalTimelineDuration = endDate - startDate;
         const timelineWidth = window.innerWidth; // Ширина таймлайна
         const offsetX = (mouseX - planeOffset.x) / scale; // Смещение курсора с учетом масштаба
-        const cursorPositionRatio = (offsetX + planeOffset.x * 2) / timelineWidth; // Позиция курсора относительно таймлайна
+        const cursorPositionRatio = (offsetX + planeOffset.x * 2) / timelineWidth;
         
         const cursorTime = new Date(cursorPositionRatio * totalTimelineDuration);
         
