@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import workerIcon from '../../img/icons/worker.svg';
 import downloadIcon from '../../img/icons/download-icon.svg';
 
-function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, isDarkTheme, nameTask, handleSetNameTask, updateTimeBlock, onResize }) {
+function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClick, onConnectBlocks, allBlocks = [], onRenameBlock, forceUpdateLines, selectedBlocks, scale, isDarkTheme, nameTask, handleSetNameTask, updateTimeBlock, onResize, planeOffset }) {
     const [showMenu, setShowMenu] = useState(false);
     const [menuPosition, setMenuPosition] = useState({ top: 0, left: 0 });
     const [isRenaming, setIsRenaming] = useState(false);
@@ -136,8 +136,8 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
     return (
         <div id={`block-${index}`} ref={blockRef} className={`task-manager__block ${isSelected ? 'selected' : ''}`}
             style={{
-                left: `${block.x * scale}px`,
-                top: `${block.y * scale}px`,
+                left: `${(block.x - planeOffset.x) * scale}px`,
+                top: `${(block.y - planeOffset.y) * scale}px`,
                 width: `${currentSize.width * scale}px`,
                 height: `${currentSize.height * scale}px`,
                 backgroundColor: isSelected ? 'rgb(3, 184, 255)' : color,

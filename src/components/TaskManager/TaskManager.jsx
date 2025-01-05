@@ -96,46 +96,49 @@ function TaskManager() {
 
     };
 
+
     const updateTimeline = () => {
         const offsetDifference = planeOffset.xTimeline - prevplaneOffset;
-        const timeOffset = offsetDifference * 10000 * scale;
-
+        const timeOffset = offsetDifference * timeInterval / window.innerWidth; // Смещение времени
         const newStartDate = new Date(startDate.getTime() - timeOffset);
         const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
-
+        
         setStartDate(newStartDate);
         setEndDate(newEndDate);
-        setPrevPlaneOffset(planeOffset.x);
+        setPrevPlaneOffset(planeOffset.xTimeline); // Сохраняем текущее смещение
     };
-
+    
     const updateCursorTime = (mouseX, mouseY) => {
-        const totalTimelineDuration = endDate.getTime() - startDate.getTime();
-        const timelineWidth = window.innerWidth;
-        const offsetX = (mouseX - planeOffset.x) / scale;
-        const cursorPositionRatio = offsetX / timelineWidth;
-        const cursorTime = new Date(startDate.getTime() + cursorPositionRatio * totalTimelineDuration);
-
-        setCursorTime(cursorTime);
-        setCursorPosition({x: offsetX, y:mouseY});
-    };
-
-    const updateBlockTime = (block, index) => {
-        const totalTimelineDuration = endDate.getTime() - startDate.getTime(); // Общий временной интервал
-        const timelineWidth = window.innerWidth; // Учитываем масштаб
-    
-        // Левая граница
-        const blockStartOffset = (block.x + planeOffset.x) / timelineWidth;
-        const BlockStartDate = new Date(startDate.getTime() + blockStartOffset * totalTimelineDuration);
-    
-        // Правая граница
-        const blockEndOffset = (block.x + block.width + planeOffset.x) / timelineWidth;
-        const BlockEndDate = new Date(startDate.getTime() + blockEndOffset * totalTimelineDuration);
+        const totalTimelineDuration = endDate - startDate;
+        const timelineWidth = window.innerWidth; // Ширина таймлайна
+        const offsetX = (mouseX - planeOffset.x) / scale; // Смещение курсора с учетом масштаба
+        const cursorPositionRatio = (offsetX + planeOffset.x * 2) / timelineWidth; // Позиция курсора относительно таймлайна
         
-        // Установка значений
+        const cursorTime = new Date(cursorPositionRatio * totalTimelineDuration);
+        
+        setCursorTime(cursorTime);
+        setCursorPosition({ x: offsetX, y: mouseY});
+    };
+    
+    const updateBlockTime = (block, index) => {
+        const totalTimelineDuration = endDate.getTime() - startDate.getTime();
+        const timelineWidth = window.innerWidth; // Ширина таймлайна
+    
+        // Левая граница блока
+        const blockStartOffset = (block.x) / scale / timelineWidth;
+        const BlockStartDate = new Date(blockStartOffset * totalTimelineDuration);
+    
+        // Правая граница блока
+        const blockEndOffset = (block.x + block.width) / scale / timelineWidth;
+        const BlockEndDate = new Date(blockEndOffset * totalTimelineDuration);
+    
         setDeadlineBlock({ BlockStartDate, BlockEndDate });
         setBlockIndex(index);
         setNameTask(block.name);
     };
+    
+    
+    
     
     const handleMouseMove = (e) => {
         if (draggingPlane) {
@@ -145,14 +148,14 @@ function TaskManager() {
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block) => ({
                     ...block,
-                    x: block.x + deltaX,
-                    y: block.y + deltaY,
+                    x: block.x,
+                    y: block.y,
                 }))
             );
 
             setPlaneOffset((prev) => ({
-                x: prev.x,
-                y: prev.y,
+                x: prev.x + deltaX,
+                y: prev.y + deltaY,
                 xTimeline: (prev.x + deltaX) / scale,
             }));
 
@@ -449,6 +452,7 @@ function TaskManager() {
                         handleSetNameTask={(e) => handleSetNameTask(e, index)}
                         updateTimeBlock={updateBlockTime}
                         onResize={(newSize) => handleBlockResize(index, newSize)}
+                        planeOffset={planeOffset}
                         // deadline={{BlockStartDate: block.startDate, BlockEndDate: block.endDate}}
                     />
                 ))}
@@ -474,7 +478,7 @@ function TaskManager() {
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={blockIndex} isDarkTheme={isDarkTheme} nameTask={nameTask}/>}
-            <div className={`time-under-cursor ${isTimelineUnderCursorHidden ? 'unvisible' : 'visible'}`} style={{left: `${cursorPosition.x * scale}px`, top: `${cursorPosition.y + 10 * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
+            <div className={`time-under-cursor ${isTimelineUnderCursorHidden ? 'unvisible' : 'visible'}`} style={{left: `${(cursorPosition.x + planeOffset.x) * scale}px`, top: `${(cursorPosition.y + 10) * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
         </div>
