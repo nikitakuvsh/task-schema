@@ -46,17 +46,6 @@ function TaskManager() {
         );
     };
 
-    const toggleTheme = () => {
-        setIsDarkTheme((prev) => !prev);
-    }
-
-    const toggleTimelineUnderCursor = () => {
-        setIsTimelineUnderCursorHidden((prev) => !prev);
-    }
-
-    const toggleTypeLeaderLine = () => {
-        setIsAnimatedLine((prev) => !prev);
-    }
 
     const handleLeaderLinesUpdate = (updateFn) => {
         leaderLinesUpdateRef.current = updateFn;
@@ -474,7 +463,7 @@ function TaskManager() {
             <div className="task-manager__buttons-container">
                 <button className="task-manager__button button--save-schema">Скачать схему</button>
                 <button className="task-manager__button button--load-schema">Загрузить схему</button>
-                <Settings toggleTheme={toggleTheme} isDarkTheme={isDarkTheme} toggleTimelineUnderCursor={toggleTimelineUnderCursor} isTimelineUnderCursorHidden={isTimelineUnderCursorHidden} toggleTypeLeaderLine={toggleTypeLeaderLine} isAnimatedLine={isAnimatedLine}/>
+                <Settings toggleTheme={() => setIsDarkTheme((prev) => !prev)} isDarkTheme={isDarkTheme} toggleTimelineUnderCursor={() => setIsTimelineUnderCursorHidden((prev) => !prev)} isTimelineUnderCursorHidden={isTimelineUnderCursorHidden} toggleTypeLeaderLine={() => setIsAnimatedLine((prev) => !prev)} isAnimatedLine={isAnimatedLine}/>
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={blockIndex} isDarkTheme={isDarkTheme} nameTask={nameTask}/>}
