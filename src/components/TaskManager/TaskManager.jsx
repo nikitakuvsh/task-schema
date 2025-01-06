@@ -117,7 +117,7 @@ function TaskManager() {
         const cursorTime = new Date(cursorPositionRatio * totalTimelineDuration);
         
         setCursorTime(cursorTime);
-        setCursorPosition({ x: mouseX / scale, y: mouseY / scale});
+        setCursorPosition({ x: offsetX, y: (mouseY) / scale});
     };
     
     const updateBlockTime = (block, index) => {
@@ -433,7 +433,7 @@ function TaskManager() {
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
             <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
             <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} isDarkTheme={isDarkTheme} />
-            <div className={`task-manager__plane ${isDarkTheme ? 'dark' : 'light'}`} onMouseDown={handlePlaneMouseDown} style={{backgroundPositionX: `${-planeOffset.x}px`, backgroundPositionY: `${-planeOffset.y}px`,}}>  
+            <div className={`task-manager__plane ${isDarkTheme ? 'dark' : 'light'}`} onMouseDown={handlePlaneMouseDown} style={{backgroundPositionX: `${-planeOffset.x * scale}px`, backgroundPositionY: `${-planeOffset.y * scale}px`,}}>  
                 {blocks.map((block, index) => (
                     <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
@@ -478,7 +478,7 @@ function TaskManager() {
                 <button className="task-manager__button button--save">Сохранить</button>
             </div>
             {asideVisible && <AsideRight onClose={() => setAsideVisible(false)} deadline={deadlineBlock} blockIndex={blockIndex} isDarkTheme={isDarkTheme} nameTask={nameTask}/>}
-            <div className={`time-under-cursor ${isTimelineUnderCursorHidden ? 'unvisible' : 'visible'}`} style={{left: `${(cursorPosition.x + planeOffset.x) * scale}px`, top: `${(cursorPosition.y + 10) * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
+            <div className={`time-under-cursor ${isTimelineUnderCursorHidden ? 'unvisible' : 'visible'}`} style={{left: `${(cursorPosition.x * scale + planeOffset.x)}px`, top: `${(cursorPosition.y + 10) * scale}px`, display: cursorPosition.x != -10 && cursorPosition.y != -10 ? '' : 'none'}}>
                     {cursorTime.toLocaleTimeString()}
             </div>
         </div>
