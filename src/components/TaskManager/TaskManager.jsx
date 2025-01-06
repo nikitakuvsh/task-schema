@@ -83,14 +83,14 @@ function TaskManager() {
             return;
         }
 
-        const adjustedX = (mouseX - offsetX) / scale;
-        const adjustedY = (mouseY - offsetY) / scale;
+        const adjustedX = (mouseX - offsetX);
+        const adjustedY = (mouseY - offsetY);
 
         setCurrentBlock({
             x: adjustedX,
             y: adjustedY,
-            width: 200 * scale,
-            height: 200 * scale,
+            width: 200,
+            height: 200,
             name: '',
         });
 
@@ -185,8 +185,8 @@ function TaskManager() {
             const offsetX = planeOffset?.x || 0;
             const offsetY = planeOffset?.y || 0;
 
-            const adjustedX = (mouseX - offsetX + planeOffset.x) / scale;
-            const adjustedY = (mouseY - offsetY + planeOffset.y) / scale;
+            const adjustedX = (mouseX - offsetX + planeOffset.x * scale);
+            const adjustedY = (mouseY - offsetY + planeOffset.y * scale);
 
             setCurrentBlock((prev) => ({
                 ...prev,
@@ -459,8 +459,8 @@ function TaskManager() {
                 {draggingButton && currentBlock && (
                     <div className="task-manager__block task-manager__block--temp"
                         style={{
-                            left: `${currentBlock.x - planeOffset.x}px`,
-                            top: `${currentBlock.y - planeOffset.y}px`,
+                            left: `${(currentBlock.x - planeOffset.x * scale)}px`,
+                            top: `${(currentBlock.y - planeOffset.y * scale)}px`,
                             width: `${currentBlock.width}px`,
                             height: `${currentBlock.height}px`,
                         }}
