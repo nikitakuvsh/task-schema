@@ -206,8 +206,8 @@ function TaskManager() {
         
             // Сохраняем выделенные блоки для отображения стилей
             const selected = blocks.filter((block) => {
-                const blockLeft = block.x * scale - planeOffset.x;
-                const blockTop = block.y * scale - planeOffset.y;
+                const blockLeft = block.x * scale - planeOffset.x * scale;
+                const blockTop = block.y * scale - planeOffset.y * scale;
                 const blockRight = blockLeft + block.width * scale;
                 const blockBottom = blockTop + block.height * scale;
         
@@ -229,8 +229,8 @@ function TaskManager() {
             // Вычисляем индексы выделенных блоков
             const selectedIndexes = blocks
                 .map((block, index) => {
-                    const blockLeft = block.x * scale - planeOffset.x;
-                    const blockTop = block.y * scale - planeOffset.y;
+                    const blockLeft = (block.x * scale - planeOffset.x) * scale;
+                    const blockTop = (block.y * scale - planeOffset.y) * scale;
                     const blockRight = blockLeft + block.width * scale;
                     const blockBottom = blockTop + block.height * scale;
         
@@ -287,9 +287,6 @@ function TaskManager() {
         updateBlockTime(updatedBlock, index);
     };
     
-    
-    
-
     const handleBlockMouseDown = (e, index) => {
         e.stopPropagation();
         setDraggingBlockIndex(index);
