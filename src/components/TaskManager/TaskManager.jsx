@@ -419,7 +419,7 @@ function TaskManager() {
         <div className="task-manager" onMouseMove={handleMouseMove} onMouseUp={handleMouseUp} onWheel={handleWheel}>
             <button className="task-manager__button button--add-task" onMouseDown={handleAddTaskMouseDown}>Добавить задачу</button>
             <Timeline startDate={startDate.toLocaleString()} endDate={endDate.toLocaleString()} isDarkTheme={isDarkTheme} />
-            <div className={`task-manager__plane ${isDarkTheme ? 'dark' : 'light'}`} onMouseDown={handlePlaneMouseDown} style={{backgroundPositionX: `${-planeOffset.x * scale}px`, backgroundPositionY: `${-planeOffset.y * scale}px`,}}>  
+            <div className={`task-manager__plane ${isDarkTheme ? 'dark' : 'light'}`} onMouseDown={handlePlaneMouseDown} style={{backgroundPositionX: `${-planeOffset.x * scale}px`, backgroundPositionY: `${-planeOffset.y * scale}px`, backgroundSize: scale > 0.5 ? `${5*(scale)}rem ${5*(scale)}rem` : '5rem 5rem'}}>  
                 {blocks.map((block, index) => (
                     <Block key={index} index={index} block={block} scale={scale}
                         onMouseDown={handleBlockMouseDown}
