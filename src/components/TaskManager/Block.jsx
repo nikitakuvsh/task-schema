@@ -126,18 +126,11 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
         }
     };
 
-    // useEffect(() => {
-    //     if (deadline?.BlockStartDate && deadline?.BlockEndDate) {
-    //         handleResize();
-    //     }
-    // }, [deadline?.BlockStartDate, deadline?.BlockEndDate]);
-    
-
     return (
         <div id={`block-${index}`} ref={blockRef} className={`task-manager__block ${isSelected ? 'selected' : ''}`}
             style={{
-                left: `${(block.x - planeOffset.x * scale)}px`,
-                top: `${(block.y - planeOffset.y * scale)}px`,
+                left: `${(block.x * scale)}px`,
+                top: `${(block.y * scale)}px`,
                 width: `${currentSize.width * scale}px`,
                 height: `${currentSize.height * scale}px`,
                 backgroundColor: isSelected ? 'rgb(3, 184, 255)' : color,
