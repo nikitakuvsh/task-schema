@@ -87,9 +87,9 @@ function TaskManager() {
 
 
     const updateTimeline = () => {
-        const offsetDifference = planeOffset.xTimeline - prevplaneOffset;
+        const offsetDifference = planeOffset.xTimeline - prevplaneOffset / scale;
         const timeOffset = offsetDifference * timeInterval / window.innerWidth; // Смещение времени
-        const newStartDate = new Date(startDate.getTime() - timeOffset);
+        const newStartDate = new Date(startDate.getTime() + timeOffset);
         const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
         
         setStartDate(newStartDate);
@@ -152,8 +152,8 @@ function TaskManager() {
         }
 
         if (draggingBlockIndex !== null) {
-            const deltaX = (e.clientX - startDrag.x) / scale;
-            const deltaY = (e.clientY - startDrag.y) / scale;
+            const deltaX = (e.clientX - startDrag.x) ;
+            const deltaY = (e.clientY - startDrag.y);
         
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block, index) =>
@@ -278,7 +278,7 @@ function TaskManager() {
     const handleBlockResize = (index, newSize) => {
         setBlocks((prevBlocks) => {
             const updatedBlocks = [...prevBlocks];
-            updatedBlocks[index] = { ...updatedBlocks[index], ...newSize };
+            updatedBlocks[index] = { ...updatedBlocks[index], ...newSize};
             return updatedBlocks;
         });
     
@@ -352,8 +352,8 @@ function TaskManager() {
             const newBlock = {
                 x: sourceBlock.x + 250,
                 y: sourceBlock.y,
-                width: 200 * scale,
-                height: 200 * scale,
+                width: 200,
+                height: 200,
             };
             return [...prev, newBlock];
         });
@@ -439,7 +439,6 @@ function TaskManager() {
                         updateTimeBlock={updateBlockTime}
                         onResize={(newSize) => handleBlockResize(index, newSize)}
                         planeOffset={planeOffset}
-                        // deadline={{BlockStartDate: block.startDate, BlockEndDate: block.endDate}}
                     />
                 ))}
                 {draggingButton && currentBlock && (
