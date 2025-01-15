@@ -185,8 +185,8 @@ function Block({ block, index, onMouseDown, onCreateConnectedBlock, onDoubleClic
             <input className="block__input-file--hidden" ref={fileInputRef} type="file" onChange={handleFileChange} />
 
             <div className="block__icons-container">
-                <img className="block__icon icon--worker" alt="Исполнитель" title="Исполнитель" src={workerIcon} />
-                <img className="block__icon icon--download-files" alt="Скачать файлы" title="Скачать файлы" src={downloadIcon} />
+                <img className="block__icon icon--worker" alt="Исполнитель" title="Исполнитель" src={workerIcon} onMouseDown={(e) => e.preventDefault()}/>
+                <img className="block__icon icon--download-files" alt="Скачать файлы" title="Скачать файлы" src={downloadIcon} onMouseDown={(e) => e.preventDefault()}/>
             </div>
 
             <div className="resize-handle resize-handle--bottom-right" onMouseDown={(e) => handleResize(e, "bottom-right")} />
