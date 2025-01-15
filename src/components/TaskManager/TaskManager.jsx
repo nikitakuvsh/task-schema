@@ -87,7 +87,7 @@ function TaskManager() {
 
 
     const updateTimeline = () => {
-        const offsetDifference = planeOffset.xTimeline - prevplaneOffset / scale;
+        const offsetDifference = (planeOffset.xTimeline - prevplaneOffset) / scale;
         const timeOffset = offsetDifference * timeInterval / window.innerWidth; // Смещение времени
         const newStartDate = new Date(startDate.getTime() + timeOffset);
         const newEndDate = new Date(newStartDate.getTime() + timeInterval / scale);
@@ -101,7 +101,7 @@ function TaskManager() {
         const totalTimelineDuration = endDate.getTime() - startDate.getTime();
         const timelineWidth = window.innerWidth; // Ширина таймлайна
         const offsetX = (mouseX - planeOffset.x) / scale; // Смещение курсора с учетом масштаба
-        const cursorPositionRatio = (offsetX + planeOffset.x * 2) / timelineWidth;
+        const cursorPositionRatio = (offsetX + planeOffset.x / 2) / timelineWidth;
         
         const cursorTime = new Date(cursorPositionRatio * totalTimelineDuration);
         
