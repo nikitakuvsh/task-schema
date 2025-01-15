@@ -143,8 +143,8 @@ function TaskManager() {
             );
 
             setPlaneOffset((prev) => ({
-                x: prev.x + deltaX,
-                y: prev.y + deltaY,
+                x: prev.x + deltaX / scale,
+                y: prev.y + deltaY / scale,
                 xTimeline: (prev.x + deltaX) / scale,
             }));
 
