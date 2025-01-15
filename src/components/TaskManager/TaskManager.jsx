@@ -152,8 +152,8 @@ function TaskManager() {
         }
 
         if (draggingBlockIndex !== null) {
-            const deltaX = (e.clientX - startDrag.x) ;
-            const deltaY = (e.clientY - startDrag.y);
+            const deltaX = (e.clientX - startDrag.x) / scale;
+            const deltaY = (e.clientY - startDrag.y) / scale;
         
             setBlocks((prevBlocks) =>
                 prevBlocks.map((block, index) =>
@@ -174,8 +174,8 @@ function TaskManager() {
             const offsetX = planeOffset?.x || 0;
             const offsetY = planeOffset?.y || 0;
 
-            const adjustedX = (mouseX - offsetX + planeOffset.x * scale);
-            const adjustedY = (mouseY - offsetY + planeOffset.y * scale);
+            const adjustedX = (mouseX - offsetX + planeOffset.x);
+            const adjustedY = (mouseY - offsetY + planeOffset.y);
 
             setCurrentBlock((prev) => ({
                 ...prev,
@@ -444,8 +444,8 @@ function TaskManager() {
                 {draggingButton && currentBlock && (
                     <div className="task-manager__block task-manager__block--temp"
                         style={{
-                            left: `${(currentBlock.x - planeOffset.x * scale)}px`,
-                            top: `${(currentBlock.y - planeOffset.y * scale)}px`,
+                            left: `${((currentBlock.x - planeOffset.x))}px`,
+                            top: `${((currentBlock.y - planeOffset.y))}px`,
                             width: `${currentBlock.width}px`,
                             height: `${currentBlock.height}px`,
                         }}
