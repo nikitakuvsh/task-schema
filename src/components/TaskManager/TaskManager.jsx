@@ -148,7 +148,7 @@ function TaskManager() {
                 xTimeline: (prev.x + deltaX) / scale,
             }));
 
-            setStartPlaneDrag({ x: e.clientX, y: e.clientY });
+            setStartPlaneDrag({ x: e.clientX, y: e.clientY});
         }
 
         if (draggingBlockIndex !== null) {

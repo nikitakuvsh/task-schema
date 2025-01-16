@@ -12,9 +12,10 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<><h2>url</h2> <p>Доска с задачами - /tasks-manager</p> <p>Задача - /task ~ /task/task_id</p></>} />
-        <Route path="/tasks-manager" element={<TaskManager />} />
-        <Route path="/task" element={<Task />} />
+        {/* <Route path="/" element={<><h2>url</h2> <p>Доска с задачами - /tasks-manager</p> <p>Задача - /task ~ /task/task_id</p></>} /> */}
+        {/* <Route path="/tasks-manager" element={<TaskManager />} /> */}
+        {/* <Route path="/task" element={<Task />} /> */}
+        <Route path="/" element={<TaskManager />}></Route>
       </Routes>
     </Router>
   );
